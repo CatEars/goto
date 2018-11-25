@@ -1,6 +1,6 @@
 # goto
 
-TODO: Badges
+![build](https://travis-ci.org/CatEars/goto.svg?branch=master)
 
 A Python command line tool for navigating your computer!
 
