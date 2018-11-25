@@ -3,25 +3,27 @@ import os
 import os.path
 import toml
 try:
-  from pathlib import Path
+    from pathlib import Path
 except ImportError:
-  from pathlib2 import Path
+    from pathlib2 import Path
 
 from . import util
 
 class StorageException(Exception):
+    '''Exception with the storage engine of goto.'''
     pass
 
 def get_config_home():
-    '''Returns the home folder of the configurations. Makes sure the directory exists.'''
+    '''Returns the home folder of the configurations.'''
     xdg_home = os.environ.get('XDG_CONFIG_HOME')
     dot_config = os.path.join(os.path.expanduser('~'), '.config')
     dot_goto = os.path.join(os.path.expanduser('~'), '.goto-cd')
 
+    join = os.path.join
     home_path = util.cond((
-        (util.ident(xdg_home), util.ident(os.path.join(xdg_home, 'goto-cd'))),
-        (lambda: Path(dot_config).exists(), util.ident(os.path.join(dot_config, 'goto-cd'))),
-        (util.truthy, util.ident(dot_goto))
+        (xdg_home, join(xdg_home, 'goto-cd')),
+        (Path(dot_config).exists(), join(dot_config, 'goto-cd')),
+        (True, dot_goto)
     ))()
 
     touch_directory(home_path)
@@ -35,7 +37,7 @@ def touch_directory(dirpath):
 
 def _touch_config_file(fpath):
     '''Makes sure the file exists.'''
-    with open(fpath, 'a') as f:
+    with open(fpath, 'a') as _:
         pass
 
 
@@ -86,4 +88,3 @@ def get_named_profile(name, public_file=True):
     except IOError:
         write_file(fpath, {})
         return {}
-
