@@ -190,3 +190,8 @@ def remove_teleport(name):
 def list_teleports():
     data = get_active_profile()
     return data.keys()
+
+
+def get_matching_teleports(prefix):
+    teleports = list_teleports()
+    return [T for T in teleports if T.startswith(prefix)]
