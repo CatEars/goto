@@ -5,3 +5,4 @@ goto_cd.egg-info
 venv
 htmlcov
 .coverage
+.tox

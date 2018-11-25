@@ -12,7 +12,8 @@ setuptools.setup(
     long_description=description,
     long_description_content_type="text/markdown",
     url="https://github.com/catears/goto",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages('src'),
+    package_dir={'': 'src'},
     classifiers=[
         "Development Status :: 1 - Planning",
         "Environment :: Console",
