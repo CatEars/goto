@@ -1,0 +1,5 @@
+build
+dist
+goto_cd.egg-info
+**.pyc
+venv
