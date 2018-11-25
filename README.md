@@ -2,7 +2,7 @@
 
 ![build](https://travis-ci.org/CatEars/goto.svg?branch=master)
 [![PyPI version](https://badge.fury.io/py/goto-cd.svg)](https://badge.fury.io/py/goto-cd)
-![coverage](./badges/coverage.png)
+![coverage](./badges/coverage.svg)
 
 A Python command line tool for navigating your computer!
 
