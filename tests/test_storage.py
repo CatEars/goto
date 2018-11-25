@@ -4,6 +4,7 @@ import os
 import os.path
 import goto
 import pytest
+import shutil
 try:
   from pathlib import Path
 except ImportError:
@@ -100,3 +101,52 @@ def test_get_active_profile():
 def test_set_active_profile_throws():
     with pytest.raises(goto.storage.StorageException):
         goto.storage.set_active_profile('nonexistant')
+
+
+@test_util.custom_home
+def test_set_teleport():
+    assert goto.storage.list_teleports() == []
+    actual_directory = './'
+    goto.storage.set_teleport('thisdir', actual_directory)
+    assert goto.storage.list_teleports() == ['thisdir']
+
+@test_util.custom_home
+def test_remove_teleport():
+    actual_directory = './'
+    goto.storage.set_teleport('thisdir', actual_directory)
+    assert goto.storage.list_teleports() == ['thisdir']
+    goto.storage.remove_teleport('thisdir')
+    assert goto.storage.list_teleports() == []
+
+@test_util.custom_home
+def test_get_matching_teleports():
+    added_teleports = [
+        ('a', './a'),
+        ('abcd', './abcd'),
+        ('b', './b')
+    ]
+    try:
+        for name, target in added_teleports:
+            os.mkdir(target)
+            goto.storage.set_teleport(name, target)
+        assert set(goto.storage.list_teleports()) == set(['a', 'abcd', 'b'])
+        assert set(goto.storage.get_matching_teleports('a')) == set(['a', 'abcd'])
+        assert set(goto.storage.get_matching_teleports('b')) == set(['b'])
+    except:
+        for _, target in added_teleports:
+            try:
+                shutil.rmtree(target)
+            except:
+                pass
+
+@test_util.custom_home
+def test_set_teleport_throws():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.set_teleport('abcd', './notanexistantdirectory')
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.set_teleport('', './')
+
+@test_util.custom_home
+def test_remove_teleport_throws():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.remove_teleport('abcd')

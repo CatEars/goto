@@ -170,8 +170,10 @@ def update_active_profile(data):
 
 def set_teleport(name, target):
     path = Path(target)
-    if not path.isdir():
+    if not path.is_dir():
         raise StorageException('{} is not a directory'.format(target))
+    if not name:
+        raise StorageException('You must provide a name')
     path = str(path.resolve())
     data = get_active_profile()
     data[name] = target
@@ -189,7 +191,7 @@ def remove_teleport(name):
 
 def list_teleports():
     data = get_active_profile()
-    return data.keys()
+    return list(data.keys())
 
 
 def get_matching_teleports(prefix):
