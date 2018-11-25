@@ -82,11 +82,6 @@ def _get_settings():
         _update_settings(default_values)
     return _read_config_file(fpath)
 
-def get_active_profile_name():
-    '''Returns the name of the active profile.'''
-    data = _get_settings()
-    return data.get('current_profile', 'default')
-
 
 def list_profiles():
     '''Returns a list of all available profiles.'''
@@ -103,9 +98,6 @@ def add_profile(name):
     if name.startswith('_'):
         msg = '{} - you cannot start profiles with "_"'.format(name)
         raise StorageException(msg)
-    if name == 'default':
-        msg = 'You cannot remove default settings'
-        raise StorageException(msg)
 
     data['profiles'].append(name)
     _update_settings(data)
@@ -121,13 +113,20 @@ def remove_profile(name):
     _update_settings(data)
 
 
-def set_current_profile(name):
+def get_active_profile_name():
+    '''Returns the name of the active profile.'''
+    data = _get_settings()
+    return data.get('current_profile', 'default')
+
+
+def set_active_profile(name):
     '''Sets the current profile.'''
     data = _get_settings()
-    if name.startswith('_'):
-        msg = '{} - you cannot start profiles with "_"'.format(name)
+    if name not in data['profiles']:
+        msg = '{} is not a profile that exists'.format(name)
         raise StorageException(msg)
     data['current_profile'] = name
+    _update_settings(data)
 
 
 def get_default_profile():
