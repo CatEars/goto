@@ -20,6 +20,10 @@ test:
 coverage:
 	pipenv run tox -e coverage
 
+coverage-badge:
+	pipenv run tox -e coverage-badge
+	pipenv run coverage-badge -o coverage.tmp.svg
+	mv coverage.tmp.svg badges/coverage.svg
 
 # These are typically not used by humans
 
