@@ -10,6 +10,7 @@ testupload: compile
 
 devinstall:
 	pipenv install --dev
+	pipenv install
 
 clean:
 	rm -rf dist build src/goto_cd.egg-info htmlcov src/goto/**.pyc src/goto/__pycache__
