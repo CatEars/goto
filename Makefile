@@ -12,7 +12,7 @@ devinstall:
 	pipenv install --dev
 
 clean:
-	rm -rf dist build goto_cd.egg-info
+	rm -rf dist build src/goto_cd.egg-info htmlcov src/goto/**.pyc src/goto/__pycache__
 
 test:
 	pipenv run tox -e unit
@@ -24,6 +24,9 @@ coverage-badge:
 	pipenv run tox -e coverage-badge
 	pipenv run coverage-badge -o coverage.tmp.svg
 	mv coverage.tmp.svg badges/coverage.svg
+
+lint:
+	pipenv run pylint src/goto --rcfile=pylintrc
 
 # These are typically not used by humans
 

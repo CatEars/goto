@@ -1,1 +1,5 @@
-from .add import *
+'''Goto - Teleport to anywhere on your computer.
+'''
+
+#pylint: disable=unused-import
+from . import storage

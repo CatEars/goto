@@ -8,8 +8,10 @@ tox = "*"
 pytest = "*"
 pytest-cov = "*"
 coverage-badge = "*"
+pylint = "*"
 
 [packages]
+toml = "*"
 
 [requires]
 python_version = "3.6"
