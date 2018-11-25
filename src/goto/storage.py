@@ -2,23 +2,26 @@
 import os
 import os.path
 import toml
-
-
-def _get_xdg_config_home():
-    '''Returns XDG_CONFIG_HOME variable.'''
-    return os.environ.get('XDG_CONFIG_HOME')
-
+try:
+  from pathlib import Path
+except ImportError:
+  from pathlib2 import Path
 
 def get_config_home():
-    '''Returns the home folder of the configurations.'''
-    if _get_xdg_config_home():
-        return os.path.join(_get_xdg_config_home(), 'goto-cd')
-    return os.path.join(os.path.expanduser('~'), '.goto-cd')
+    '''Returns the home folder of the configurations. Makes sure the directory exists.'''
+    xdg_home = os.environ.get('XDG_CONFIG_HOME')
+    if xdg_home and Path(xdg_home).exists():
+        return xdg_home
+    if Path(os.path.expanduser('~'), '.config').exists():
+        return os.path.join(os.path.expanduser('~'), '.config')
+    path = os.path.join(os.path.expanduser('~'), '.goto-cd')
+    touch_directory(path)
+    return path
 
 
 def touch_directory(dirpath):
     '''Makes sure the whole directory path exists.'''
-    os.makedirs(dirpath, exist_ok=True)
+    Path(dirpath).mkdir(exist_ok=True)
 
 
 def _touch_config_file(fpath):
@@ -31,7 +34,7 @@ def _retrieve_config(fname):
     '''Retrieves a config file, if it does not exist, creates it.'''
     touch_directory(get_config_home())
     fpath = os.path.join(get_config_home(), fname)
-    touch_config_file(fpath)
+    _touch_config_file(fpath)
     return fpath
 
 
@@ -53,11 +56,25 @@ def get_default_profile():
     return get_named_profile('default')
 
 
-def get_named_profile(name):
+def update_default_profile(data):
+    '''Updates the default profile.'''
+    update_named_profile('default', data)
+
+
+def update_named_profile(name, data):
+    config_path = os.path.join(get_config_home(), '{}.toml'.format(name))
+    write_file(config_path, data)
+
+
+def get_named_profile(name, public_file=False):
     '''Returns the data of the specified profile.'''
+    if public_file and name.startswith('_'):
+        raise Exception('{} is an invalid name. Cannot start with "_"'.format(name))
     fpath = _retrieve_config('{}.toml'.format(name))
     try:
         data = _read_config_file(fpath)
+        return toml.loads(data)
     except IOError:
         write_file(fpath, dict())
         return {}
+
