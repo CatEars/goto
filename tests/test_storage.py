@@ -51,3 +51,52 @@ def test_no_such_file():
 def test_private_files():
     with pytest.raises(goto.storage.StorageException):
         goto.storage.get_named_profile('_notokay', public_file=True)
+
+
+@test_util.custom_home
+def test_add_profiles():
+    profiles = goto.storage.list_profiles()
+    assert profiles == ['default']
+    goto.storage.add_profile('abcd')
+    profiles = goto.storage.list_profiles()
+    assert set(profiles) == set(['default', 'abcd'])
+
+
+@test_util.custom_home
+def test_add_profiles_throws():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.add_profile('_notallowed')
+    goto.storage.add_profile('somerandomprofile')
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.add_profile('somerandomprofile')
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.add_profile('default')
+
+
+@test_util.custom_home
+def test_remove_profile():
+    goto.storage.add_profile('abcd')
+    profiles = goto.storage.list_profiles()
+    assert set(profiles) == set(['default', 'abcd'])
+    goto.storage.remove_profile('abcd')
+    profiles = goto.storage.list_profiles()
+    assert set(profiles) == set(['default'])
+
+
+@test_util.custom_home
+def test_remove_profile_throws():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.remove_profile('nonexistant')
+
+@test_util.custom_home
+def test_get_active_profile():
+    assert goto.storage.get_active_profile_name() == 'default'
+    goto.storage.add_profile('abcd')
+    goto.storage.set_active_profile('abcd')
+    assert goto.storage.get_active_profile_name() == 'abcd'
+
+
+@test_util.custom_home
+def test_set_active_profile_throws():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.set_active_profile('nonexistant')
