@@ -158,3 +158,35 @@ def get_named_profile(name, public_file=True):
     except IOError:
         write_file(fpath, {})
         return {}
+
+
+def get_active_profile():
+    return get_named_profile(get_active_profile_name())
+
+
+def update_active_profile(data):
+    update_named_profile(get_active_profile_name(), data)
+
+
+def set_teleport(name, target):
+    path = Path(target)
+    if not path.isdir():
+        raise StorageException('{} is not a directory'.format(target))
+    path = str(path.resolve())
+    data = get_active_profile()
+    data[name] = target
+    update_active_profile(data)
+
+
+def remove_teleport(name):
+    data = get_active_profile()
+    if not data.get(name):
+        msg = '{} is not a location you can teleport to'.format(name)
+        raise StorageException(msg)
+    del data[name]
+    update_active_profile(data)
+
+
+def list_teleports():
+    data = get_active_profile()
+    return data.keys()
