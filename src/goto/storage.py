@@ -7,16 +7,25 @@ try:
 except ImportError:
   from pathlib2 import Path
 
+from . import util
+
+class StorageException(Exception):
+    pass
+
 def get_config_home():
     '''Returns the home folder of the configurations. Makes sure the directory exists.'''
     xdg_home = os.environ.get('XDG_CONFIG_HOME')
-    if xdg_home and Path(xdg_home).exists():
-        return xdg_home
-    if Path(os.path.expanduser('~'), '.config').exists():
-        return os.path.join(os.path.expanduser('~'), '.config')
-    path = os.path.join(os.path.expanduser('~'), '.goto-cd')
-    touch_directory(path)
-    return path
+    dot_config = os.path.join(os.path.expanduser('~'), '.config')
+    dot_goto = os.path.join(os.path.expanduser('~'), '.goto-cd')
+
+    home_path = util.cond((
+        (util.ident(xdg_home), util.ident(os.path.join(xdg_home, 'goto-cd'))),
+        (lambda: Path(dot_config).exists(), util.ident(os.path.join(dot_config, 'goto-cd'))),
+        (util.truthy, util.ident(dot_goto))
+    ))()
+
+    touch_directory(home_path)
+    return home_path
 
 
 def touch_directory(dirpath):
@@ -66,15 +75,15 @@ def update_named_profile(name, data):
     write_file(config_path, data)
 
 
-def get_named_profile(name, public_file=False):
+def get_named_profile(name, public_file=True):
     '''Returns the data of the specified profile.'''
     if public_file and name.startswith('_'):
-        raise Exception('{} is an invalid name. Cannot start with "_"'.format(name))
+        raise StorageException('{} is an invalid name. Cannot start with "_"'.format(name))
     fpath = _retrieve_config('{}.toml'.format(name))
     try:
         data = _read_config_file(fpath)
         return toml.loads(data)
     except IOError:
-        write_file(fpath, dict())
+        write_file(fpath, {})
         return {}
 

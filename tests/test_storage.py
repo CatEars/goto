@@ -1,7 +1,13 @@
 '''Tests for storage functions'''
 
+import os
 import os.path
 import goto
+import pytest
+try:
+  from pathlib import Path
+except ImportError:
+  from pathlib2 import Path
 
 import test_util
 
@@ -33,3 +39,15 @@ def test_get_updated_profile():
     post_data = goto.storage.get_default_profile()
     assert pre_data != post_data
     assert post_data == { 'test': 'abcd' }
+
+@test_util.custom_home
+def test_no_such_file():
+    data = goto.storage.get_named_profile('nosuchprofile')
+    assert data == dict()
+    does_exist = Path(os.environ['XDG_CONFIG_HOME'], 'goto-cd', 'nosuchprofile.toml').exists()
+    assert does_exist
+
+@test_util.custom_home
+def test_private_files():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.get_named_profile('_notokay', public_file=True)
