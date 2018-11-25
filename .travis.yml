@@ -1,0 +1,7 @@
+language: python
+python:
+  - "3.6"
+install: pip install --user pipenv
+script:
+  - make devinstall
+  - make full-tox-test
