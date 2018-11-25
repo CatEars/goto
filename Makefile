@@ -23,6 +23,12 @@ coverage:
 
 # These are typically not used by humans
 
+zsh-tests:
+	echo "ZSH tests unimplemented"
+
+bash-tests:
+	echo "Bash tests unimplemented"
+
 full-tox-test:
 	pipenv run tox -c tox.ini
 

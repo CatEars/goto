@@ -5,3 +5,5 @@ install: pip install pipenv
 script:
   - make devinstall
   - make full-tox-test
+  - make bash-tests
+  - make zsh-tests
