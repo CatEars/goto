@@ -161,14 +161,17 @@ def get_named_profile(name, public_file=True):
 
 
 def get_active_profile():
+    '''Returns the currently active profile.'''
     return get_named_profile(get_active_profile_name())
 
 
 def update_active_profile(data):
+    '''Updates the data of the currently active profile.'''
     update_named_profile(get_active_profile_name(), data)
 
 
 def set_teleport(name, target):
+    '''Sets a (new) teleport path for the currently active profile.'''
     path = Path(target)
     if not path.is_dir():
         raise StorageException('{} is not a directory'.format(target))
@@ -181,6 +184,7 @@ def set_teleport(name, target):
 
 
 def remove_teleport(name):
+    '''Removes a teleport from the currently active profile.'''
     data = get_active_profile()
     if not data.get(name):
         msg = '{} is not a location you can teleport to'.format(name)
@@ -190,10 +194,12 @@ def remove_teleport(name):
 
 
 def list_teleports():
+    '''Lists all different possible teleports.'''
     data = get_active_profile()
     return list(data.keys())
 
 
 def get_matching_teleports(prefix):
+    '''Returns all teleports matching the prefix.'''
     teleports = list_teleports()
     return [T for T in teleports if T.startswith(prefix)]
