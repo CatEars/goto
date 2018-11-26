@@ -4,7 +4,9 @@
 [![PyPI version](https://badge.fury.io/py/goto-cd.svg)](https://badge.fury.io/py/goto-cd)
 ![coverage](https://github.com/CatEars/goto/blob/master/badges/coverage.svg)
 
-A Python command line tool for navigating your computer!
+A command line tool for teleporting around your computer!
+
+TODO: Add gif of how goto works
 
 ## Key Features
 
