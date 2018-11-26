@@ -1,1 +1,43 @@
-Unfinished
+# Contributing
+
+Any contributions are welcome. As with any open source repo the rule is to be
+sensible. Use Pull Requests to ask for changes to the code that you made, open
+an issue for suggestions and issues/bugs. Do understand however that I have a
+full time job and I can't fix everything. In other words, if you really really
+really want something to happen I am afraid the best way is to do it yourself
+(and then send a PR my way of course!). Below are some lists that should give an
+idea of how to best contribute.
+
+## Very Welcome Contributions
+
+* Adaptations for other shells (I've heard `fish` is popular).
+* Unit tests
+* Tests in form of user stories
+* MacOS testing
+* PRs that solve obvious bugs
+* Documentation (More Pictures/Videos/Screencasts = More Better)
+* Developer Documentation
+* Issues with reproducible bugs
+* Happy and Professional Discussions
+
+## Quite Welcom Contributions
+
+* Feature Suggestions
+* Issues with somewhat reproducible bugs
+
+## Kinda Welcome Contributions
+
+* Translation
+* Windows Integration
+* Issues with bugs what only say what went wrong
+
+## Not So Welcome Contributions
+
+* Big changes to the underlying code base
+* Issues with bugs that is impossible to understand why they would be bugs and are 100% impossible to reproduce
+* Angry and Unprofessional Discussions
+
+## Banhammer level
+
+* "Please hire me/Looking for a developer with X/Are you experienced in X?" LinkedIn posts disguised as Issues
+
