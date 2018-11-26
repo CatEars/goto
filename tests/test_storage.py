@@ -121,9 +121,9 @@ def test_remove_teleport():
 @test_util.custom_home
 def test_get_matching_teleports():
     added_teleports = [
-        ('a', './a'),
-        ('abcd', './abcd'),
-        ('b', './b')
+        ('a', test_util.home_path('./a')),
+        ('abcd', test_util.home_path('./abcd')),
+        ('b', test_util.home_path('./b'))
     ]
     try:
         for name, target in added_teleports:
