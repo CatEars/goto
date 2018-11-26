@@ -1,7 +1,8 @@
 '''Utility functions used inside goto.'''
 
-def cond(predicate_and_handlers):
+def cond(*args):
     '''Advanced conditional branching.'''
+    predicate_and_handlers = args
 
     def do_handler(handler_or_value, args, kwargs):
         '''Returns either $1(*args, **kwargs) or $1 if $1 is not a function.'''

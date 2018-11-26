@@ -20,11 +20,11 @@ def get_config_home():
     dot_goto = os.path.join(os.path.expanduser('~'), '.goto-cd')
 
     join = os.path.join
-    home_path = util.cond((
+    home_path = util.cond(
         (xdg_home, join(xdg_home, 'goto-cd')),
         (Path(dot_config).exists(), join(dot_config, 'goto-cd')),
         (True, dot_goto)
-    ))()
+    )()
 
     touch_directory(home_path)
     return home_path
