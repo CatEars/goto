@@ -2,7 +2,7 @@
 
 ![build](https://travis-ci.org/CatEars/goto.svg?branch=master)
 [![PyPI version](https://badge.fury.io/py/goto-cd.svg)](https://badge.fury.io/py/goto-cd)
-![coverage](./badges/coverage.svg)
+![coverage](https://raw.githubusercontent.com/CatEars/goto/master/badges/coverage.svg)
 
 A Python command line tool for navigating your computer!
 
@@ -26,12 +26,12 @@ pip install goto-cd
 
 ## Documentation
 
-See the [docs](/docs/README.md) folder.
+See the [docs](https://github.com/CatEars/goto/blob/master/docs/README.md) folder.
 
 ## Contributing
 
-See [contributing.md](/Contributing.md).
+See [contributing.md](https://github.com/CatEars/goto/blob/master/Contributing.md).
 
 ## License
 
-MIT - see [LICENSE](/LICENSE)
+MIT - see [LICENSE](https://github.com/CatEars/goto/blob/master/LICENSE)
