@@ -14,6 +14,11 @@ setuptools.setup(
     url="https://github.com/catears/goto",
     packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
+    entry_points={
+        'console_scripts': [
+            'goto-helper = goto.cli:main'
+        ]
+    },
     classifiers=[
         "Development Status :: 1 - Planning",
         "Environment :: Console",

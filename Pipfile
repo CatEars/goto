@@ -12,6 +12,7 @@ pylint = "*"
 
 [packages]
 toml = "*"
+click = "*"
 
 [requires]
 python_version = "3.6"
