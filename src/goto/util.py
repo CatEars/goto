@@ -1,5 +1,8 @@
 '''Utility functions used inside goto.'''
 
+import click
+from . import config
+
 def cond(*args):
     '''Advanced conditional branching.'''
     predicate_and_handlers = args
@@ -20,3 +23,7 @@ def cond(*args):
         return None
 
     return inner
+
+
+def pretty(text):
+    click.secho(text, **config.STYLE)
