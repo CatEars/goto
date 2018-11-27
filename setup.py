@@ -20,9 +20,7 @@ setuptools.setup(
         ]
     },
     data_files=[
-        ('shell', 'shell/goto'),
-        ('shell', 'shell/goto-bash.sh'),
-        ('shell', 'shell/goto-zsh.sh')
+        ('shell', ['shell/goto', 'shell/goto-bash.sh', 'shell/goto-zsh.sh'])
     ],
     classifiers=[
         "Development Status :: 1 - Planning",
