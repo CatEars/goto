@@ -186,7 +186,7 @@ def set_teleport(name, target):
         raise StorageException('{} is not a directory'.format(target))
     if not name:
         raise StorageException('You must provide a name')
-    path = str(path.resolve())
+    target = str(path.resolve())
     data = get_active_profile()
     data[name] = target
     update_active_profile(data)

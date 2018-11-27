@@ -90,6 +90,11 @@ def test_remove_profile_throws():
         goto.storage.remove_profile('nonexistant')
 
 @test_util.custom_home
+def test_remove_default_profile_throws():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.remove_profile('default')
+
+@test_util.custom_home
 def test_get_active_profile():
     assert goto.storage.get_active_profile_name() == 'default'
     goto.storage.add_profile('abcd')
@@ -150,3 +155,14 @@ def test_set_teleport_throws():
 def test_remove_teleport_throws():
     with pytest.raises(goto.storage.StorageException):
         goto.storage.remove_teleport('abcd')
+
+@test_util.custom_home
+def test_get_teleport_target():
+  abspath = os.path.abspath('./')
+  goto.storage.set_teleport('abcd', './')
+  assert goto.storage.get_teleport_target('abcd') == abspath
+
+@test_util.custom_home
+def test_get_teleport_target_throws():
+    with pytest.raises(goto.storage.StorageException):
+      goto.storage.get_teleport_target('abcd')
