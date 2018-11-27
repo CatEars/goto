@@ -1,0 +1,8 @@
+# This file is meant to be sourced
+# Entrypoint for any application on unix
+
+if [ -n "$ZSH_VERSION" ]; then
+    source ./goto-zsh.sh
+elif [ -n "$BASH_VERSION" ]; then
+    source ./goto-bash.sh
+fi

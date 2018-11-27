@@ -19,6 +19,11 @@ setuptools.setup(
             'goto-helper = goto.cli:main'
         ]
     },
+    data_files=[
+        ('shell', 'shell/goto'),
+        ('shell', 'shell/goto-bash.sh'),
+        ('shell', 'shell/goto-zsh.sh')
+    ],
     classifiers=[
         "Development Status :: 1 - Planning",
         "Environment :: Console",
