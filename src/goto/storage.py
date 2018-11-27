@@ -21,8 +21,8 @@ def get_config_home():
 
     join = os.path.join
     home_path = util.cond(
-        (xdg_home, join(xdg_home, 'goto-cd')),
-        (Path(dot_config).exists(), join(dot_config, 'goto-cd')),
+        (xdg_home, lambda: join(xdg_home, 'goto-cd')),
+        (Path(dot_config).exists(), lambda: join(dot_config, 'goto-cd')),
         (True, dot_goto)
     )()
 
@@ -40,6 +40,12 @@ def _touch_config_file(fpath):
     with open(fpath, 'a') as _:
         pass
 
+
+def _remove_file(name):
+    home = get_config_home()
+    fpath = os.path.join(home, '{}.toml'.format(name))
+    if os.path.exists(fpath):
+        os.remove(fpath)
 
 def _retrieve_config(fname):
     '''Retrieves a config file, if it does not exist, creates it.'''
@@ -109,9 +115,12 @@ def remove_profile(name):
     if name not in data['profiles']:
         msg = '{} - not a profile that exists'.format(name)
         raise StorageException(msg)
+    if name == 'default':
+        msg = 'you cannot remove the default profile'
+        raise StorageException(msg)
     data['profiles'].remove(name)
     _update_settings(data)
-
+    _remove_file(name)
 
 def get_active_profile_name():
     '''Returns the name of the active profile.'''
@@ -197,6 +206,14 @@ def list_teleports():
     '''Lists all different possible teleports.'''
     data = get_active_profile()
     return list(data.keys())
+
+
+def get_teleport_target(name):
+    data = get_active_profile()
+    if name not in data:
+        msg = '{} is not a valid teleport'.format(name)
+        raise StorageException(msg)
+    return data[name]
 
 
 def get_matching_teleports(prefix):
