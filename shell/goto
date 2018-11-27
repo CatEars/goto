@@ -1,8 +1,17 @@
 # This file is meant to be sourced
 # Entrypoint for any application on unix
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 if [ -n "$ZSH_VERSION" ]; then
-    source ./goto-zsh.sh
+    if [ -f $DIR/goto-zsh.sh ]; then
+        source $DIR/goto-zsh.sh
+    else
+        echo "Inside zsh but could not find 'goto-zsh.sh!' inside $DIR"
+    fi
 elif [ -n "$BASH_VERSION" ]; then
-    source ./goto-bash.sh
+    if [ -f $DIR/goto-zsh.sh ]; then
+        source $DIR/goto-bash.sh
+    else
+        echo "Inside bash but could not find 'goto-bash.sh!' inside $DIR"
+    fi
 fi
