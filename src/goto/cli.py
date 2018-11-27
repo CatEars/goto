@@ -81,12 +81,12 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles):
             util.error('Could not find "{}". Is it really a directory?'.format(target))
             return
 
+        target = os.path.abspath(target)
         if ':' in add:
             name, _ = add.split(':')
         else:
             name = os.path.basename(target)
 
-        target = os.path.abspath(target)
         do_add(name, target)
         util.pretty('Added "', nl=False)
         util.detail('{}'.format(name), nl=False)
@@ -146,7 +146,9 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles):
             (list, handle_list),
             (rmprofile, handle_rmprofile),
             (profile, handle_profile),
-            (profiles, handle_profiles)
+            (profiles, handle_profiles),
+            (True, lambda: exit(1))
         )()
     except storage.StorageException as exception:
         util.error(str(exception))
+        exit(1)
