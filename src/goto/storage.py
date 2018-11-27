@@ -75,6 +75,13 @@ def _update_settings(data):
     write_file(fpath, data)
 
 
+def _write_default_file():
+    '''Writes default data to default.toml'''
+    home = get_config_home()
+    fpath = os.path.join(home, 'default.toml')
+    write_file(fpath, {})
+
+
 def _get_settings():
     '''Returns the configuration settings.'''
     fname = '_setting.toml'
@@ -86,6 +93,7 @@ def _get_settings():
             'profiles': ['default']
         }
         _update_settings(default_values)
+        _write_default_file()
     return _read_config_file(fpath)
 
 
@@ -107,6 +115,8 @@ def add_profile(name):
 
     data['profiles'].append(name)
     _update_settings(data)
+    fpath = os.path.join(get_config_home(), '{}.toml'.format(name))
+    write_file(fpath, {})
 
 
 def remove_profile(name):

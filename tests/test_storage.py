@@ -76,12 +76,26 @@ def test_add_profiles_throws():
 
 @test_util.custom_home
 def test_remove_profile():
+    files = lambda: os.listdir(goto.storage.get_config_home())
     goto.storage.add_profile('abcd')
     profiles = goto.storage.list_profiles()
     assert set(profiles) == set(['default', 'abcd'])
+    assert set(files()) == set(['default.toml', '_setting.toml', 'abcd.toml'])
     goto.storage.remove_profile('abcd')
     profiles = goto.storage.list_profiles()
     assert set(profiles) == set(['default'])
+    assert set(files()) == set(['default.toml', '_setting.toml'])
+
+
+@test_util.custom_home
+def test_add_profile_and_get_teleport():
+    files = lambda: os.listdir(goto.storage.get_config_home())
+    goto.storage.add_profile('abcd')
+    assert set(files()) == set(['default.toml', '_setting.toml', 'abcd.toml'])
+    goto.storage.set_teleport('teleport', './')
+    assert goto.storage.get_teleport_target('teleport') == os.path.abspath('./')
+    goto.storage.remove_profile('abcd')
+    assert set(files()) == set(['default.toml', '_setting.toml'])
 
 
 @test_util.custom_home
