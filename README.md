@@ -22,9 +22,30 @@ Goto - The good way to program
 
 ## Installing
 
-```
+#### bash
+
+```sh
 pip install goto-cd
+_gotohelper --install bash
+source ~/.bashrc
 ```
+
+#### zsh
+
+```sh
+pip install goto-cd
+_gotohelper --install zsh
+source ~/.zshrc
+```
+
+#### Help I get "Command not found!"
+
+There is a slight chance you get the error message `_gotohelper: command not
+found` when installing. This probably means that goto was installed correctly,
+but your `PATH` variable needs to include where `_gotohelper` is located. With
+newer versions of pip `_gotohelper` tends to be installed in `~/.local/bin` and
+so you would add `export PATH=$PATH:~/.local/bin` to the end of your `.bashrc`
+in bash and `.zshrc` in zsh.
 
 ## Documentation
 

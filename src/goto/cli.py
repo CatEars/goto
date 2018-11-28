@@ -1,10 +1,10 @@
 '''Command Line Interface for working with Goto.
 '''
-import click
 import os
+import click
 from . import util
 from . import storage
-
+from . import install as install_self
 
 def do_add(name, target):
     '''Sets a teleport for the active profile.'''
@@ -67,7 +67,8 @@ def do_profiles():
 @click.option('--rmprofile', '-m', default='', help='Remove a profile')
 @click.option('--profile', '-p', default='', help='Switch to a different profile')
 @click.option('--profiles', is_flag=True, default=False, help='List all profiles')
-def main(add, get, prefix, remove, rmprofile, list, profile, profiles):
+@click.option('--install', required=False, type=click.Choice(['bash', 'zsh'], help='Install goto for the given shell "bash" or "zsh"'))
+def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
     '''Helper for jumping to anywhere on your computer!'''
 
     def handle_add():
@@ -137,6 +138,23 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles):
             else:
                 util.pretty(profile)
 
+    def handle_install():
+        if install == 'bash':
+            install_self.install_bash()
+            util.pretty('goto is now installed when using bash.')
+            util.pretty('to activate it make sure to RESTART your' +
+                        'shell, like in the good old days')
+        elif install == 'zsh':
+            install_self.install_zsh()
+            util.pretty('goto is now installed when using zsh')
+            util.pretty('to activate it make sure to RESTART your' +
+                        'shell, like in the good old days')
+
+    def print_help():
+        with click.Context(main) as ctx:
+            click.echo(main.get_help(ctx))
+        exit(1)
+
     try:
         util.cond(
             (add, handle_add),
@@ -147,7 +165,8 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles):
             (rmprofile, handle_rmprofile),
             (profile, handle_profile),
             (profiles, handle_profiles),
-            (True, lambda: exit(1))
+            (install, handle_install),
+            (True, print_help)
         )()
     except storage.StorageException as exception:
         util.error(str(exception))

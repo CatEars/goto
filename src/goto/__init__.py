@@ -5,3 +5,4 @@
 from . import storage
 from . import util
 from . import cli
+from . import install
