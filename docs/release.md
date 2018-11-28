@@ -4,6 +4,7 @@ Developer checklist on new major release
 [ ] Make sure all bash tests pass
 [ ] Make sure all zsh tests pass
 [ ] Make sure Travis passes all above tests
+[ ] Up affected version and compile
 [ ] Make sure uploading to test pypi can install and then run bash/zsh tests
 
 * At this point we are confident that the commit is an okay release, it is time to release it.

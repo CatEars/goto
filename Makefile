@@ -40,7 +40,7 @@ full-tox-test:
 	pipenv run tox -c tox.ini
 
 install-test-package:
-	pip install --user --index-url "https://test.pypi.org/simple/" goto-cd
+	pip3 install --user --index-url "https://test.pypi.org/simple/" --extra-index-url "https://pypi.org/simple/" goto-cd
 
 upload-new-distribution:
 	twine upload dist/*

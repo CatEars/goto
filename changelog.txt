@@ -1,0 +1,8 @@
+Version 0.1.1 - First Public PyPI Release (beta)
+
+First public release of goto.
+
+The basic functionality is there with --add,--list,--remove,--profile,--profiles
+and bash completion. The coverage of the code is rather meager so far, but most
+of the feature development for this cycle is finished and so we can focus on
+testing and quality assurance.
