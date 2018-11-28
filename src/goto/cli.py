@@ -67,7 +67,7 @@ def do_profiles():
 @click.option('--rmprofile', '-m', default='', help='Remove a profile')
 @click.option('--profile', '-p', default='', help='Switch to a different profile')
 @click.option('--profiles', is_flag=True, default=False, help='List all profiles')
-@click.option('--install', required=False, type=click.Choice(['bash', 'zsh'], help='Install goto for the given shell "bash" or "zsh"'))
+@click.option('--install', required=False, type=click.Choice(['bash', 'zsh']), help='Install goto for the given shell "bash" or "zsh"')
 def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
     '''Helper for jumping to anywhere on your computer!'''
 

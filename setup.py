@@ -26,6 +26,9 @@ setuptools.setup(
     package_data={
         'goto': ['shell/*']
     },
+    install_requires=[
+        'toml', 'click'
+    ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",
