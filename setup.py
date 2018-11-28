@@ -72,7 +72,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     entry_points={
         'console_scripts': [
-            'goto-helper = goto.cli:main'
+            '_gotohelper = goto.cli:main'
         ]
     },
     data_files=[

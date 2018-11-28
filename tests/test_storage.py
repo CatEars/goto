@@ -76,18 +76,37 @@ def test_add_profiles_throws():
 
 @test_util.custom_home
 def test_remove_profile():
+    files = lambda: os.listdir(goto.storage.get_config_home())
     goto.storage.add_profile('abcd')
     profiles = goto.storage.list_profiles()
     assert set(profiles) == set(['default', 'abcd'])
+    assert set(files()) == set(['default.toml', '_setting.toml', 'abcd.toml'])
     goto.storage.remove_profile('abcd')
     profiles = goto.storage.list_profiles()
     assert set(profiles) == set(['default'])
+    assert set(files()) == set(['default.toml', '_setting.toml'])
+
+
+@test_util.custom_home
+def test_add_profile_and_get_teleport():
+    files = lambda: os.listdir(goto.storage.get_config_home())
+    goto.storage.add_profile('abcd')
+    assert set(files()) == set(['default.toml', '_setting.toml', 'abcd.toml'])
+    goto.storage.set_teleport('teleport', './')
+    assert goto.storage.get_teleport_target('teleport') == os.path.abspath('./')
+    goto.storage.remove_profile('abcd')
+    assert set(files()) == set(['default.toml', '_setting.toml'])
 
 
 @test_util.custom_home
 def test_remove_profile_throws():
     with pytest.raises(goto.storage.StorageException):
         goto.storage.remove_profile('nonexistant')
+
+@test_util.custom_home
+def test_remove_default_profile_throws():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.remove_profile('default')
 
 @test_util.custom_home
 def test_get_active_profile():
@@ -150,3 +169,14 @@ def test_set_teleport_throws():
 def test_remove_teleport_throws():
     with pytest.raises(goto.storage.StorageException):
         goto.storage.remove_teleport('abcd')
+
+@test_util.custom_home
+def test_get_teleport_target():
+  abspath = os.path.abspath('./')
+  goto.storage.set_teleport('abcd', './')
+  assert goto.storage.get_teleport_target('abcd') == abspath
+
+@test_util.custom_home
+def test_get_teleport_target_throws():
+    with pytest.raises(goto.storage.StorageException):
+      goto.storage.get_teleport_target('abcd')

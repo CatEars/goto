@@ -21,8 +21,8 @@ def get_config_home():
 
     join = os.path.join
     home_path = util.cond(
-        (xdg_home, join(xdg_home, 'goto-cd')),
-        (Path(dot_config).exists(), join(dot_config, 'goto-cd')),
+        (xdg_home, lambda: join(xdg_home, 'goto-cd')),
+        (Path(dot_config).exists(), lambda: join(dot_config, 'goto-cd')),
         (True, dot_goto)
     )()
 
@@ -40,6 +40,12 @@ def _touch_config_file(fpath):
     with open(fpath, 'a') as _:
         pass
 
+
+def _remove_file(name):
+    home = get_config_home()
+    fpath = os.path.join(home, '{}.toml'.format(name))
+    if os.path.exists(fpath):
+        os.remove(fpath)
 
 def _retrieve_config(fname):
     '''Retrieves a config file, if it does not exist, creates it.'''
@@ -69,6 +75,13 @@ def _update_settings(data):
     write_file(fpath, data)
 
 
+def _write_default_file():
+    '''Writes default data to default.toml'''
+    home = get_config_home()
+    fpath = os.path.join(home, 'default.toml')
+    write_file(fpath, {})
+
+
 def _get_settings():
     '''Returns the configuration settings.'''
     fname = '_setting.toml'
@@ -80,6 +93,7 @@ def _get_settings():
             'profiles': ['default']
         }
         _update_settings(default_values)
+        _write_default_file()
     return _read_config_file(fpath)
 
 
@@ -101,6 +115,8 @@ def add_profile(name):
 
     data['profiles'].append(name)
     _update_settings(data)
+    fpath = os.path.join(get_config_home(), '{}.toml'.format(name))
+    write_file(fpath, {})
 
 
 def remove_profile(name):
@@ -109,9 +125,12 @@ def remove_profile(name):
     if name not in data['profiles']:
         msg = '{} - not a profile that exists'.format(name)
         raise StorageException(msg)
+    if name == 'default':
+        msg = 'you cannot remove the default profile'
+        raise StorageException(msg)
     data['profiles'].remove(name)
     _update_settings(data)
-
+    _remove_file(name)
 
 def get_active_profile_name():
     '''Returns the name of the active profile.'''
@@ -177,7 +196,7 @@ def set_teleport(name, target):
         raise StorageException('{} is not a directory'.format(target))
     if not name:
         raise StorageException('You must provide a name')
-    path = str(path.resolve())
+    target = str(path.resolve())
     data = get_active_profile()
     data[name] = target
     update_active_profile(data)
@@ -197,6 +216,14 @@ def list_teleports():
     '''Lists all different possible teleports.'''
     data = get_active_profile()
     return list(data.keys())
+
+
+def get_teleport_target(name):
+    data = get_active_profile()
+    if name not in data:
+        msg = '{} is not a valid teleport'.format(name)
+        raise StorageException(msg)
+    return data[name]
 
 
 def get_matching_teleports(prefix):
