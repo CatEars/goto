@@ -5,6 +5,23 @@ _GotoHelperFunction() {
     local cur
     COMPREPLY=()
     cur=${COMP_WORDS[COMP_CWORD]}
+
+    if [ $COMP_CWORD -eq 1 ] && [ -n "$cur" ]; then
+        # User is trying to jump
+        answers="$(_gotohelper --prefix $cur)"
+        COMPREPLY=($answers)
+        return
+    fi
+
+    if [ $COMP_CWORD -eq 2 ]; then
+        command=${COMP_WORDS[1]}
+        if [ "$command" = "--remove" ] && [ -n "$cur" ]; then
+            # User is trying to remove
+            answers="$(_gotohelper --prefix $cur)"
+            COMPREPLY=($answers)
+            return
+        fi
+    fi
 }
 
 function goto() {
@@ -28,4 +45,4 @@ function goto() {
     fi
 }
 
-#complete -F _GotoHelperFunction goto
+complete -F _GotoHelperFunction goto
