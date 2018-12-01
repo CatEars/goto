@@ -33,8 +33,9 @@ lint:
 zsh-tests:
 	echo "ZSH tests unimplemented"
 
-bash-tests:
-	echo "Bash tests unimplemented"
+bash-tests: compile
+	docker build . -f Dockerfile-bashtest -t goto_ubuntu_bashtest
+	docker run -e SHELL=bash -e RCFILE=/root/.bashrc goto_ubuntu_bashtest
 
 full-tox-test:
 	pipenv run tox -c tox.ini
