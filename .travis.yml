@@ -9,14 +9,18 @@ jobs:
   include:
     # Compilation stage
     - stage: compile
+      name: 'Compilation'
       script: make devinstall
 
     # Testing stage
     - stage: test
+      name: 'Python 2 & Python 3 Compatibility Tests'
       script: make full-tox-test
     - stage: test
+      name: 'Bash Tests'
       script: make bash-tests
     - stage: test
+      name: 'Zsh Tests'
       script: make zsh-tests
 
     # Deploy stage (TODO)
