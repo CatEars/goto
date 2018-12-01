@@ -20,6 +20,7 @@ test:
 coverage:
 	pipenv run tox -e coverage
 
+# I don't think I ever explain why I generate the coverage badge myself
 coverage-badge:
 	pipenv run tox -e coverage-badge
 	pipenv run coverage-badge -o coverage.tmp.svg
@@ -29,9 +30,15 @@ lint:
 	pipenv run pylint src/goto --rcfile=pylintrc
 
 # These are typically not used by humans
+# I mean, you are free to do mostly what you want in life.
+# I won't even try to personally stop you.
+# But these are mostly robot stuff.
+# So..
+# Ya know...
 
 zsh-tests: compile
-	echo "ZSH tests unimplemented"
+	docker build . -f Dockerfile-zshtest -t goto_ubuntu_zshtest
+	docker run -e SHELL=zsh -e RCFILE=/root/.zshrc goto_ubuntu_zshtest
 
 bash-tests: compile
 	docker build . -f Dockerfile-bashtest -t goto_ubuntu_bashtest

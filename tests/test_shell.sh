@@ -61,7 +61,7 @@ cd /
 echo "Trying to teleport to 'a' without such a teleport"
 goto a
 
-if [ "$(pwd)" == "/tmp/a" ]; then
+if [ "$(pwd)" = "/tmp/a" ]; then
     echo "Teleported to a, even tough there is no such teleport!"
     exit 1
 fi
