@@ -30,14 +30,14 @@ lint:
 
 # These are typically not used by humans
 
-zsh-tests:
+zsh-tests: compile devinstall
 	echo "ZSH tests unimplemented"
 
-bash-tests: compile
+bash-tests: compile devinstall
 	docker build . -f Dockerfile-bashtest -t goto_ubuntu_bashtest
 	docker run -e SHELL=bash -e RCFILE=/root/.bashrc goto_ubuntu_bashtest
 
-full-tox-test:
+full-tox-test: compile devinstall
 	pipenv run tox -c tox.ini
 
 install-test-package:
