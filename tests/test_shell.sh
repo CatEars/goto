@@ -35,11 +35,19 @@ if ! goto --get t; then
     echo "Cannot use different name for teleports"
     exit 1
 fi
+
+echo "Removing teleportation 't'"
 goto --remove t
 
-# Try listing
+if goto --get t; then
+    echo "Removed teleport 't' but it is still here!"
+    exit 1
+fi
+
+echo "Trying to list all teleports"
 goto --list
 
+echo "Changing profile to 'otherprofile'"
 goto --profile otherprofile
 
 if goto --get a; then
@@ -47,8 +55,10 @@ if goto --get a; then
     exit 1
 fi
 
+echo 'Backing up to /'
 cd /
 
+echo "Trying to teleport to 'a' without such a teleport"
 goto a
 
 if [ "$(pwd)" == "/tmp/a" ]; then
@@ -56,4 +66,29 @@ if [ "$(pwd)" == "/tmp/a" ]; then
     exit 1
 fi
 
+cd /tmp
 
+echo "Adding aaa, aab, aac and aad and expecting prefix 'aa' to return these"
+goto --add aaa:a
+goto --add aab:b
+goto --add aac:c
+goto --add aad:d
+
+if ! goto --prefix aa; then
+    echo "Prefix for 'aa' failed"
+    exit 1
+fi
+
+echo "Getting prefix for aa and testing aaa, aab, aac and aad"
+RES="$(goto --prefix aa)"
+if [[ $RES != *"aaa"* ]] || [[ $RES != *"aab"* ]] || [[ $RES != *"aac"* ]] || [[ $RES != *"aad"* ]]; then
+    echo "Prefix operation did not return everything!"
+    exit 1
+fi
+
+echo "Getting prefix for aab, should be an exact string"
+RES="$(goto --prefix aab)"
+if [[ $RES != "aab" ]]; then
+    echo "Prefix could not find when a perfectly matching prefix existed"
+    exit 1
+fi
