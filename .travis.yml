@@ -2,8 +2,21 @@ language: python
 python:
   - "3.6"
 install: pip install pipenv
-script:
-  - make devinstall
-  - make full-tox-test
-  - make bash-tests
-  - make zsh-tests
+stages:
+  - compile
+  - test
+jobs:
+  include:
+    # Compilation stage
+    - stage: compile
+      script: make devinstall
+
+    # Testing stage
+    - stage: test
+      script: make full-tox-test
+    - stage: test
+      script: make bash-tests
+    - stage: test
+      script: make zsh-tests
+
+    # Deploy stage (TODO)
