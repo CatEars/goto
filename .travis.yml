@@ -15,7 +15,10 @@ jobs:
     # Testing stage
     - stage: test
       name: 'Python 2 & Python 3 Compatibility Tests'
-      script: make full-tox-test
+      script:
+        - apt-get update
+        - apt-get install python2 # Install latest python2
+        - make full-tox-test
     - stage: test
       name: 'Bash Tests'
       script: make bash-tests
