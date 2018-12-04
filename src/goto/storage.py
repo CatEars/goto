@@ -219,6 +219,7 @@ def list_teleports():
 
 
 def get_teleport_target(name):
+    '''Return a teleport target that matches name or throw an error.'''
     data = get_active_profile()
     if name not in data:
         msg = '{} is not a valid teleport'.format(name)

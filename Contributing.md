@@ -11,6 +11,7 @@ idea of how to best contribute.
 ## Very Welcome Contributions
 
 * Adaptations for other shells (I've heard `fish` is popular).
+* Improvements for currently supported shells
 * Unit tests
 * Tests in form of user stories
 * MacOS testing
