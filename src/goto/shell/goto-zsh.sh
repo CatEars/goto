@@ -1,10 +1,6 @@
 # This file is meant to be sourced
 # Entry point for zsh based shells
 
-function _GotoHelperFunction() {
-
-}
-
 function goto() {
     GT=_gotohelper
     A=$1
@@ -23,6 +19,28 @@ function goto() {
     else
         # We are dealing with a command + argument
         $GT $A $B
+    fi
+}
+
+function _GotoHelperFunction() {
+    local context state state_descr line
+    typeset -A opt_args
+
+    _arguments -C \
+               "-h[Show help information]" \
+               "--help[Show help infromation]" \
+               "--add[Add a teleport]" \
+               "--remove[Remove a teleport]" \
+               "--install[Install for either bash or zsh]" \
+               "--profile[Change to a different profile]" \
+               "--profiles[List all profiles]" \
+               "--rmprofile[Remove a profile]" \
+               "*::arg:->string"
+
+    A=$line
+    if [[ ! $A == -* ]] && [ -n "$A" ]; then
+        target=($(goto --prefix $A))
+        _describe -t target 'teleports' target
     fi
 }
 
