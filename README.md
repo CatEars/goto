@@ -6,7 +6,7 @@
 
 A command line tool for teleporting around your computer!
 
-TODO: Add gif of how goto works
+![Usage Gif](https://github.com/CatEars/goto/docs/simple-usage.gif)
 
 ## Key Features
 
