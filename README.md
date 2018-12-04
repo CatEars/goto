@@ -6,7 +6,7 @@
 
 A command line tool for teleporting around your computer!
 
-![Usage Gif](https://github.com/CatEars/goto/docs/simple-usage.gif)
+![Usage Gif](https://github.com/CatEars/goto/blob/master/docs/simple-usage.gif)
 
 ## Key Features
 
