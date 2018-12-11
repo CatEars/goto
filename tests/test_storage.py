@@ -172,11 +172,17 @@ def test_remove_teleport_throws():
 
 @test_util.custom_home
 def test_get_teleport_target():
-  abspath = os.path.abspath('./')
-  goto.storage.set_teleport('abcd', './')
-  assert goto.storage.get_teleport_target('abcd') == abspath
+    abspath = os.path.abspath('./')
+    goto.storage.set_teleport('abcd', './')
+    assert goto.storage.get_teleport_target('abcd') == abspath
 
 @test_util.custom_home
 def test_get_teleport_target_throws():
     with pytest.raises(goto.storage.StorageException):
       goto.storage.get_teleport_target('abcd')
+
+@test_util.custom_home
+def test_home_folder_expands():
+    goto.storage.set_teleport('home', '~')
+    home = os.path.expanduser('~')
+    assert home == goto.storage.get_teleport_target('~')
