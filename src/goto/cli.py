@@ -130,6 +130,8 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
 
     def handle_profile():
         do_profile(profile)
+        util.pretty('Changed to profile: ', nl=False)
+        util.detail(profile)
 
     def handle_profiles():
         chosen_profile, profiles = do_profiles()
