@@ -58,6 +58,48 @@ def do_profiles():
     return chosen_profile, profiles
 
 
+def handle_add(add):
+    '''Handler for adding a target.'''
+    if ':' in add:
+        _, target = add.split(':')
+    else:
+        target = add
+
+    target = os.path.expanduser(target)
+    if not os.path.isdir(target):
+        util.error('Could not find "{}". Is it really a directory?'.format(target))
+        return
+
+    target = os.path.abspath(target)
+    if ':' in add:
+        name, _ = add.split(':')
+    else:
+        name = os.path.basename(target)
+
+    do_add(name, target)
+    util.pretty('Added "', nl=False)
+    util.detail('{}'.format(name), nl=False)
+    util.pretty('" which points to "', nl=False)
+    util.detail('{}'.format(target), nl=False)
+    util.pretty('"')
+
+
+def handle_remove(remove):
+    '''Handler for removing a target.'''
+    do_remove(remove)
+
+
+def handle_list():
+    '''Handler for listing a target.'''
+    listing = do_list()
+    biggest_tele_length = max((len(x[0]) for x in listing), default=0)
+    length = biggest_tele_length
+    for tele, target in listing:
+        util.pretty('{}'.format(tele.ljust(length)), nl=False)
+        util.boring(' => ', nl=False)
+        util.pretty(target)
+
+
 @click.command()
 @click.option('--add', '-a', default='', help='Add a teleport ([name:]path/to/directory)')
 @click.option('--get', '-g', default='', help='Get a teleport')
@@ -71,31 +113,6 @@ def do_profiles():
 def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
     '''Helper for jumping to anywhere on your computer!'''
 
-    def handle_add():
-        '''Handler for adding a target'''
-        if ':' in add:
-            _, target = add.split(':')
-        else:
-            target = add
-
-        target = os.path.expanduser(target)
-        if not os.path.isdir(target):
-            util.error('Could not find "{}". Is it really a directory?'.format(target))
-            return
-
-        target = os.path.abspath(target)
-        if ':' in add:
-            name, _ = add.split(':')
-        else:
-            name = os.path.basename(target)
-
-        do_add(name, target)
-        util.pretty('Added "', nl=False)
-        util.detail('{}'.format(name), nl=False)
-        util.pretty('" which points to "', nl=False)
-        util.detail('{}'.format(target), nl=False)
-        util.pretty('"')
-
     def handle_get():
         target = do_get(get)
         util.text_response(target)
@@ -105,17 +122,6 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
         if prefixes:
             util.text_response(' '.join(prefixes))
 
-    def handle_remove():
-        do_remove(remove)
-
-    def handle_list():
-        listing = do_list()
-        biggest_tele_length = max((len(x[0]) for x in listing), default=0)
-        L = biggest_tele_length
-        for tele, target in listing:
-            util.pretty('{}'.format(tele.ljust(L)), nl=False)
-            util.boring(' => ', nl=False)
-            util.pretty(target)
 
     def handle_rmprofile():
         pre_profile = storage.get_active_profile_name()
@@ -160,10 +166,10 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
 
     try:
         util.cond(
-            (add, handle_add),
+            (add, lambda: handle_add(add)),
             (get, handle_get),
             (prefix, handle_prefix),
-            (remove, handle_remove),
+            (remove, lambda: handle_remove(remove)),
             (list, handle_list),
             (rmprofile, handle_rmprofile),
             (profile, handle_profile),
