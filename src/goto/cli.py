@@ -78,6 +78,7 @@ def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
         else:
             target = add
 
+        target = os.path.expanduser(target)
         if not os.path.isdir(target):
             util.error('Could not find "{}". Is it really a directory?'.format(target))
             return

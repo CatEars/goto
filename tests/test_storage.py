@@ -185,4 +185,4 @@ def test_get_teleport_target_throws():
 def test_home_folder_expands():
     goto.storage.set_teleport('home', '~')
     home = os.path.expanduser('~')
-    assert home == goto.storage.get_teleport_target('~')
+    assert home == goto.storage.get_teleport_target('home')

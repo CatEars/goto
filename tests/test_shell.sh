@@ -92,3 +92,9 @@ if [[ $RES != "aab" ]]; then
     echo "Prefix could not find when a perfectly matching prefix existed"
     exit 1
 fi
+
+echo "Adding ~"
+if ! goto --add home:~; then
+    echo "Could not add with ~!"
+    exit 1
+fi

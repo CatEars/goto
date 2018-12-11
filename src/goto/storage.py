@@ -191,7 +191,7 @@ def update_active_profile(data):
 
 def set_teleport(name, target):
     '''Sets a (new) teleport path for the currently active profile.'''
-    path = Path(target)
+    path = Path(os.path.expanduser(target))
     if not path.is_dir():
         raise StorageException('{} is not a directory'.format(target))
     if not name:
