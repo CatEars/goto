@@ -58,117 +58,148 @@ def do_profiles():
     return chosen_profile, profiles
 
 
-@click.command()
-@click.option('--add', '-a', default='', help='Add a teleport ([name:]path/to/directory)')
-@click.option('--get', '-g', default='', help='Get a teleport')
-@click.option('--prefix', default='', help='List all paths that are prefix of X')
-@click.option('--remove', '-r', default='', help='Remove a teleport')
-@click.option('--list', '-l', is_flag=True, default=False, help='List all teleports')
-@click.option('--rmprofile', '-m', default='', help='Remove a profile')
-@click.option('--profile', '-p', default='', help='Switch to a different profile')
-@click.option('--profiles', is_flag=True, default=False, help='List all profiles')
-@click.option('--install', required=False, type=click.Choice(['bash', 'zsh']), help='Install goto for the given shell "bash" or "zsh"')
-def main(add, get, prefix, remove, rmprofile, list, profile, profiles, install):
-    '''Helper for jumping to anywhere on your computer!'''
+def handle_add(add):
+    '''Handler for adding a target.'''
+    if ':' in add:
+        _, target = add.split(':')
+    else:
+        target = add
 
-    def handle_add():
-        '''Handler for adding a target'''
-        if ':' in add:
-            _, target = add.split(':')
-        else:
-            target = add
+    target = os.path.expanduser(target)
+    if not os.path.isdir(target):
+        util.error('Could not find "{}". Is it really a directory?'.format(target))
+        return
 
-        target = os.path.expanduser(target)
-        if not os.path.isdir(target):
-            util.error('Could not find "{}". Is it really a directory?'.format(target))
-            return
+    target = os.path.abspath(target)
+    if ':' in add:
+        name, _ = add.split(':')
+    else:
+        name = os.path.basename(target)
 
-        target = os.path.abspath(target)
-        if ':' in add:
-            name, _ = add.split(':')
-        else:
-            name = os.path.basename(target)
-
-        do_add(name, target)
-        util.pretty('Added "', nl=False)
-        util.detail('{}'.format(name), nl=False)
-        util.pretty('" which points to "', nl=False)
-        util.detail('{}'.format(target), nl=False)
-        util.pretty('"')
-
-    def handle_get():
-        target = do_get(get)
-        util.text_response(target)
-
-    def handle_prefix():
-        prefixes = do_prefix(prefix)
-        if prefixes:
-            util.text_response(' '.join(prefixes))
-
-    def handle_remove():
-        do_remove(remove)
-
-    def handle_list():
-        listing = do_list()
-        biggest_tele_length = max((len(x[0]) for x in listing), default=0)
-        L = biggest_tele_length
-        for tele, target in listing:
-            util.pretty('{}'.format(tele.ljust(L)), nl=False)
-            util.boring(' => ', nl=False)
-            util.pretty(target)
-
-    def handle_rmprofile():
-        pre_profile = storage.get_active_profile_name()
-        do_rmprofile(rmprofile)
-        post_profile = storage.get_active_profile_name()
-        util.pretty('Removed profile: ', nl=False)
-        util.detail(rmprofile)
-        if pre_profile != post_profile:
-            util.pretty('Changed to profile: ', nl=False)
-            util.detail(post_profile)
+    do_add(name, target)
+    util.pretty('Added "', nl=False)
+    util.detail('{}'.format(name), nl=False)
+    util.pretty('" which points to "', nl=False)
+    util.detail('{}'.format(target), nl=False)
+    util.pretty('"')
 
 
-    def handle_profile():
-        do_profile(profile)
+def handle_remove(remove):
+    '''Handler for removing a target.'''
+    do_remove(remove)
+
+
+def handle_list():
+    '''Handler for listing a target.'''
+    listing = do_list()
+    biggest_tele_length = max((len(x[0]) for x in listing), default=0)
+    length = biggest_tele_length
+    for tele, target in listing:
+        util.pretty('{}'.format(tele.ljust(length)), nl=False)
+        util.boring(' => ', nl=False)
+        util.pretty(target)
+
+
+def handle_get(get):
+    '''Handler for getting teleport target.'''
+    target = do_get(get)
+    util.text_response(target)
+
+def handle_prefix(prefix):
+    '''Handler for printing prefixes matching "prefix".'''
+    prefixes = do_prefix(prefix)
+    if prefixes:
+        util.text_response(' '.join(prefixes))
+
+
+def handle_rmprofile(rmprofile):
+    '''Handler for removing a profile.'''
+    pre_profile = storage.get_active_profile_name()
+    do_rmprofile(rmprofile)
+    post_profile = storage.get_active_profile_name()
+    util.pretty('Removed profile: ', nl=False)
+    util.detail(rmprofile)
+    if pre_profile != post_profile:
         util.pretty('Changed to profile: ', nl=False)
-        util.detail(profile)
+        util.detail(post_profile)
 
-    def handle_profiles():
-        chosen_profile, profiles = do_profiles()
-        for profile in profiles:
-            if chosen_profile == profile:
-                util.detail('> {}'.format(chosen_profile))
-            else:
-                util.pretty(profile)
 
-    def handle_install():
-        if install == 'bash':
-            install_self.install_bash()
-            util.pretty('goto is now installed when using bash.')
-            util.pretty('to activate it make sure to RESTART your' +
-                        'shell, like in the good old days')
-        elif install == 'zsh':
-            install_self.install_zsh()
-            util.pretty('goto is now installed when using zsh')
-            util.pretty('to activate it make sure to RESTART your' +
-                        'shell, like in the good old days')
+def handle_profile(profile):
+    '''Handler for changing profile.'''
+    do_profile(profile)
+    util.pretty('Changed to profile: ', nl=False)
+    util.detail(profile)
 
-    def print_help():
-        with click.Context(main) as ctx:
-            click.echo(main.get_help(ctx))
-        exit(1)
+
+def handle_profiles():
+    '''Handler for listing profiles.'''
+    chosen_profile, profiles = do_profiles()
+    for profile in profiles:
+        if chosen_profile == profile:
+            util.detail('> {}'.format(chosen_profile))
+        else:
+            util.pretty(profile)
+
+
+def handle_install(install):
+    '''Installs for different shells.'''
+    if install == 'bash':
+        install_self.install_bash()
+        util.pretty('goto is now installed when using bash.')
+        util.pretty('to activate it make sure to RESTART your' +
+                    'shell, like in the good old days')
+    elif install == 'zsh':
+        install_self.install_zsh()
+        util.pretty('goto is now installed when using zsh')
+        util.pretty('to activate it make sure to RESTART your' +
+                    'shell, like in the good old days')
+
+
+def print_help():
+    '''Prints help text and exists with non-zero exit code.'''
+    with click.Context(main) as ctx:
+        click.echo(main.get_help(ctx))
+    exit(1)
+
+
+HELP = {
+    'add': 'Add a teleport ([name:]path/to/directory)',
+    'get': 'Print a teleport target',
+    'prefix': 'List all targets that have X as prefix',
+    'remove': 'Remove a teleport',
+    'list': 'List all teleports',
+    'rmprofile': 'Remove a profile',
+    'profile': 'Switch to a (possibly non-existant) profile',
+    'profiles': 'List all profiles',
+    'install': 'Install goto for the given shell, "bash" or "zsh"'
+}
+
+BASH_ZSH = click.Choice(['bash', 'zsh'])
+
+@click.command()
+@click.option('--add', '-a', default='', help=HELP['add'])
+@click.option('--get', '-g', default='', help=HELP['get'])
+@click.option('--prefix', default='', help=HELP['prefix'])
+@click.option('--remove', '-r', default='', help=HELP['remove'])
+@click.option('--list', '-l', is_flag=True, default=False, help=HELP['list'])
+@click.option('--rmprofile', '-m', default='', help=HELP['rmprofile'])
+@click.option('--profile', '-p', default=None, help=HELP['profile'])
+@click.option('--profiles', is_flag=True, default=False, help=HELP['profiles'])
+@click.option('--install', required=False, type=BASH_ZSH, help=HELP['install'])
+def main(**kwargs):
+    '''Helper for jumping to anywhere on your computer!'''
 
     try:
         util.cond(
-            (add, handle_add),
-            (get, handle_get),
-            (prefix, handle_prefix),
-            (remove, handle_remove),
-            (list, handle_list),
-            (rmprofile, handle_rmprofile),
-            (profile, handle_profile),
-            (profiles, handle_profiles),
-            (install, handle_install),
+            (kwargs['add'], lambda: handle_add(kwargs['add'])),
+            (kwargs['get'], lambda: handle_get(kwargs['get'])),
+            (kwargs['prefix'], lambda: handle_prefix(kwargs['prefix'])),
+            (kwargs['remove'], lambda: handle_remove(kwargs['remove'])),
+            (kwargs['list'], handle_list),
+            (kwargs['rmprofile'], lambda: handle_rmprofile(kwargs['rmprofile'])),
+            (kwargs['profile'] is not None, lambda: handle_profile(kwargs['profile'])),
+            (kwargs['profiles'], handle_profiles),
+            (kwargs['install'], lambda: handle_install(kwargs['install'])),
             (True, print_help)
         )()
     except storage.StorageException as exception:
