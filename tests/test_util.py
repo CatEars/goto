@@ -1,19 +1,17 @@
-import os.path
+import os
 import tempfile
 import shutil
-import functools
+import decorator
 
-def custom_home(func):
+@decorator.decorator
+def custom_home(func, *args, **kwargs):
     '''Use a custom home for most operations.'''
+    try:
+        os.environ['XDG_CONFIG_HOME'] = tempfile.mkdtemp(prefix='gotocd')
+        func(*args, **kwargs)
+    finally:
+        shutil.rmtree(os.environ['XDG_CONFIG_HOME'])
 
-    @functools.wraps(func)
-    def wrapped(*args, **kwargs):
-        try:
-            os.environ['XDG_CONFIG_HOME'] = tempfile.mkdtemp(prefix='gotocd')
-            func(*args, **kwargs)
-        finally:
-            shutil.rmtree(os.environ['XDG_CONFIG_HOME'])
-    return wrapped
 
 def home_path(fpath):
     '''Returns a path relative to 'Home'.'''

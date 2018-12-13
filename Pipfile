@@ -9,6 +9,7 @@ pytest = "*"
 pytest-cov = "*"
 coverage-badge = "*"
 pylint = "*"
+decorator = "*"
 
 [packages]
 toml = "*"

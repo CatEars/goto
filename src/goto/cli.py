@@ -92,7 +92,9 @@ def handle_remove(remove):
 def handle_list():
     '''Handler for listing a target.'''
     listing = do_list()
-    biggest_tele_length = max((len(x[0]) for x in listing), default=0)
+    # default=0 is not possible in py2 so we default to the list [0]
+    # Can we please just move on to python3 now. It's not funny anymore.
+    biggest_tele_length = max([len(x[0]) for x in listing] or [0])
     length = biggest_tele_length
     for tele, target in listing:
         util.pretty('{}'.format(tele.ljust(length)), nl=False)
