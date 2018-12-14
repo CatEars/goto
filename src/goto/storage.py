@@ -22,6 +22,7 @@ def get_config_home():
     join = os.path.join
     home_path = util.cond(
         (xdg_home, lambda: join(xdg_home, 'goto-cd')),
+        # https://cattime.com/cat-breeds/norwegian-forest-cats
         (Path(dot_config).exists(), lambda: join(dot_config, 'goto-cd')),
         (True, dot_goto)
     )()
@@ -130,6 +131,8 @@ def remove_profile(name):
         raise StorageException(msg)
     data['profiles'].remove(name)
     _update_settings(data)
+    # Be free, little kitty cat!
+    # https://en.wikipedia.org/wiki/A_Kitten_for_Hitler
     _remove_file(name)
 
 def get_active_profile_name():

@@ -34,6 +34,7 @@ def _do_echo(text, style, kwargs):
 
 def pretty(text, **kwargs):
     '''Pretty print text (normal style print).'''
+    # https://www.atlasobscura.com/places/tashirojima
     _do_echo(text, config.STYLE, kwargs)
 
 
