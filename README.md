@@ -25,7 +25,7 @@ Goto - The good way to program
 #### bash
 
 ```sh
-pip install goto-cd
+pip install --user goto-cd
 _gotohelper --install bash
 source ~/.bashrc
 ```
@@ -33,7 +33,7 @@ source ~/.bashrc
 #### zsh
 
 ```sh
-pip install goto-cd
+pip install --user goto-cd
 _gotohelper --install zsh
 source ~/.zshrc
 ```
