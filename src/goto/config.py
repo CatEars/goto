@@ -1,3 +1,5 @@
+'''Configuration for goto'''
+
 STYLE = {
     'fg': 'green'
 }

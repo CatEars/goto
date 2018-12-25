@@ -11,7 +11,7 @@ from . import util
 
 class StorageException(Exception):
     '''Exception with the storage engine of goto.'''
-    pass
+
 
 def get_config_home():
     '''Returns the home folder of the configurations.'''
@@ -42,6 +42,7 @@ def _touch_config_file(fpath):
 
 
 def _remove_file(name):
+    '''Helper for removing file from configuration home.'''
     home = get_config_home()
     fpath = os.path.join(home, '{}.toml'.format(name))
     if os.path.exists(fpath):

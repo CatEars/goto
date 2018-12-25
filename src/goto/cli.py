@@ -67,7 +67,8 @@ def handle_add(add):
 
     target = os.path.expanduser(target)
     if not os.path.isdir(target):
-        util.error('Could not find "{}". Is it really a directory?'.format(target))
+        util.error('Could not find "{}".'.format(target))
+        util.error('Is it really a directory?')
         return
 
     target = os.path.abspath(target)
@@ -196,14 +197,17 @@ def main(**kwargs):
     '''CLI for teleporting to anywhere on your computer!'''
 
     try:
+        has_prefix = isinstance(kwargs['prefix'], str)
+        has_profile = kwargs['profile'] is not None
+        has_rm = kwargs['rmprofile']
         util.cond(
             (kwargs['add'], lambda: handle_add(kwargs['add'])),
             (kwargs['get'], lambda: handle_get(kwargs['get'])),
-            (isinstance(kwargs['prefix'], str), lambda: handle_prefix(kwargs['prefix'])),
+            (has_prefix, lambda: handle_prefix(kwargs['prefix'])),
             (kwargs['remove'], lambda: handle_remove(kwargs['remove'])),
             (kwargs['list'], handle_list),
-            (kwargs['rmprofile'], lambda: handle_rmprofile(kwargs['rmprofile'])),
-            (kwargs['profile'] is not None, lambda: handle_profile(kwargs['profile'])),
+            (has_rm, lambda: handle_rmprofile(kwargs['rmprofile'])),
+            (has_profile, lambda: handle_profile(kwargs['profile'])),
             (kwargs['profiles'], handle_profiles),
             (kwargs['install'], lambda: handle_install(kwargs['install'])),
             (True, print_help)
