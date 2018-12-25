@@ -39,7 +39,7 @@ function _GotoHelperFunction() {
 
     A=$line
     if [[ ! $A == -* ]]; then
-        target=($(goto --prefix "$A"))
+        target=($(_gotohelper --prefix "$A"))
         _describe -t target 'teleports' target
     fi
 }

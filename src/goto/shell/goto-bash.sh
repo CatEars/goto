@@ -8,7 +8,7 @@ _GotoHelperFunction() {
 
     if [ $COMP_CWORD -eq 1 ]; then
         # User is trying to jump
-        answers="$(_gotohelper --prefix \"$cur\")"
+        answers="$(_gotohelper --prefix "$cur")"
         COMPREPLY=($answers)
         return
     fi
@@ -17,7 +17,7 @@ _GotoHelperFunction() {
         command=${COMP_WORDS[1]}
         if [ "$command" = "--remove" ] && [ -n "$cur" ]; then
             # User is trying to remove
-            answers="$(_gotohelper --prefix $cur)"
+            answers="$(_gotohelper --prefix "$cur")"
             COMPREPLY=($answers)
             return
         fi
