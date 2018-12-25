@@ -96,6 +96,12 @@ def test_prefix(runner):
     line = streams.decode('utf-8').strip()
     assert line == 'a abc' or line == 'abc a'
 
+    with runner.isolation() as outstreams:
+        cli.handle_prefix('')
+        streams = outstreams[0].getvalue()
+    line = streams.decode('utf-8').strip()
+    assert set(line.split(' ')) == set(['a', 'b', 'abc'])
+
 
 @test_util.custom_home
 def test_list_profiles(runner):

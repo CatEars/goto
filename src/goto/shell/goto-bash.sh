@@ -6,9 +6,9 @@ _GotoHelperFunction() {
     COMPREPLY=()
     cur=${COMP_WORDS[COMP_CWORD]}
 
-    if [ $COMP_CWORD -eq 1 ] && [ -n "$cur" ]; then
+    if [ $COMP_CWORD -eq 1 ]; then
         # User is trying to jump
-        answers="$(_gotohelper --prefix $cur)"
+        answers="$(_gotohelper --prefix \"$cur\")"
         COMPREPLY=($answers)
         return
     fi

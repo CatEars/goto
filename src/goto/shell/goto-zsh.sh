@@ -38,8 +38,8 @@ function _GotoHelperFunction() {
                "*::arg:->string"
 
     A=$line
-    if [[ ! $A == -* ]] && [ -n "$A" ]; then
-        target=($(goto --prefix $A))
+    if [[ ! $A == -* ]]; then
+        target=($(goto --prefix "$A"))
         _describe -t target 'teleports' target
     fi
 }
