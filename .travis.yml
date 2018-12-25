@@ -1,26 +1,28 @@
 language: python
 python:
-  - "3.6"
+- '3.6'
 install: pip install pipenv
 stages:
-  - compile
-  - test
+- compile
+- test
 jobs:
   include:
-    # Compilation stage
-    - stage: compile
-      name: 'Compilation'
-      script: make devinstall
-
-    # Testing stage
-    - stage: test
-      name: 'Python 2 & Python 3 Compatibility Tests'
-      script: make full-tox-test
-    - stage: test
-      name: 'Bash Tests'
-      script: make bash-tests
-    - stage: test
-      name: 'Zsh Tests'
-      script: make zsh-tests
-
-    # Deploy stage (TODO)
+  - stage: compile
+    name: Compilation
+    script: make devinstall
+  - stage: test
+    name: Python 2 & Python 3 Compatibility Tests
+    script: make full-tox-test
+  - stage: test
+    name: Bash Tests
+    script: make bash-tests
+  - stage: test
+    name: Zsh Tests
+    script: make zsh-tests
+deploy:
+  provider: pypi
+  username: catears
+  password:
+    secure: cuj4oIFewj2yJmjDevIFspnkJi/X1OncMvexaLXBKpNUIDGVTq36DRUvuVGdVQUy7QC0BmR31T8hA1VMxBVGnAQpqDWpzXExWNoMYidsftQaKWFDCE9Dsnlk0SfI9POrDNabl3eVA1QFbJYJ5AzBw+tSAzS7RAgKS9cE2UWKIRuW9mwOzp74DYgM0Uoi2c5UIIN54wUJbYSwldEPRYPMwNrtzHb4rUJb0aSW6TPWL8Cw48YY7RA2QjBHtli9x0ia0ecXTe309YCY75SzCVe2+UxDs4JpjzFatR0VO38V+QdLID6Nl157ZtpmEfp9TCe0CKAffSmY/9FFvENlWB8VPA8TQDgvNcnSzHQJh82FC81w4yd8Rh9s7/gZqAdAlw7z9tVYx3a0zYIuKHZhJwMzBHNsIL/S0YgRX+4gmjgK4taDTfrFK4XKUS0N2Gfic88+uPbVy6vRs2qSy18Md+XuP/arXo7kNp8RMBrhgV7nIoSAC7bJzRLK3uHDB4Iowsmwggq2e0WtskQIQwBXyChUEwTU4dVK+TbxBYClm6+LmS5kU//7eUhtdfpdkzrbg4s8T+IyQxAGVDHWOmi8aQvSlK6ReShXt+b5jilt9HzJgLy7rUUaozrJgYilKMeobNpnnaessA1yCRMQI43O88nvPNdKocnhYcAfgOey7JFxoVM=
+  on:
+    tags: true
