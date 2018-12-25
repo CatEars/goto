@@ -1,3 +1,14 @@
+Version 0.2.1 - First Major update
+
+Features:
+  - Add tab completion for the empty string
+  - Add output to commands that were missing output
+
+Documentation upgrades:
+  - Add tldr for the simplest commands
+  - Add manual for all commands
+  - Do not load a ton of gifs when looking in docs folder
+
 Version 0.1.1 - First Public PyPI Release (beta)
 
 First public release of goto.
