@@ -28,7 +28,7 @@ function _GotoHelperFunction() {
 
     _arguments -C \
                "-h[Show help information]" \
-               "--help[Show help infromation]" \
+               "--help[Show help information]" \
                "--add[Add a teleport]" \
                "--remove[Remove a teleport]" \
                "--install[Install for either bash or zsh]" \
