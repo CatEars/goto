@@ -185,7 +185,7 @@ BASH_ZSH = click.Choice(['bash', 'zsh'])
 @click.command()
 @click.option('--add', '-a', default='', help=HELP['add'])
 @click.option('--get', '-g', default='', help=HELP['get'])
-@click.option('--prefix', default='', help=HELP['prefix'])
+@click.option('--prefix', default=None, help=HELP['prefix'])
 @click.option('--remove', '-r', default='', help=HELP['remove'])
 @click.option('--list', '-l', is_flag=True, default=False, help=HELP['list'])
 @click.option('--rmprofile', '-m', default='', help=HELP['rmprofile'])
@@ -193,13 +193,13 @@ BASH_ZSH = click.Choice(['bash', 'zsh'])
 @click.option('--profiles', is_flag=True, default=False, help=HELP['profiles'])
 @click.option('--install', required=False, type=BASH_ZSH, help=HELP['install'])
 def main(**kwargs):
-    '''Helper for jumping to anywhere on your computer!'''
+    '''CLI for teleporting to anywhere on your computer!'''
 
     try:
         util.cond(
             (kwargs['add'], lambda: handle_add(kwargs['add'])),
             (kwargs['get'], lambda: handle_get(kwargs['get'])),
-            (kwargs['prefix'], lambda: handle_prefix(kwargs['prefix'])),
+            (isinstance(kwargs['prefix'], str), lambda: handle_prefix(kwargs['prefix'])),
             (kwargs['remove'], lambda: handle_remove(kwargs['remove'])),
             (kwargs['list'], handle_list),
             (kwargs['rmprofile'], lambda: handle_rmprofile(kwargs['rmprofile'])),

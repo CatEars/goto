@@ -151,6 +151,7 @@ def test_get_matching_teleports():
         assert set(goto.storage.list_teleports()) == set(['a', 'abcd', 'b'])
         assert set(goto.storage.get_matching_teleports('a')) == set(['a', 'abcd'])
         assert set(goto.storage.get_matching_teleports('b')) == set(['b'])
+        assert set(goto.storage.get_matching_teleports('')) == set(['a', 'b', 'abcd'])
     except:
         for _, target in added_teleports:
             try:
