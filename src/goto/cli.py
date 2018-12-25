@@ -87,6 +87,9 @@ def handle_add(add):
 def handle_remove(remove):
     '''Handler for removing a target.'''
     do_remove(remove)
+    util.pretty('Removed teleport "', nl=False)
+    util.detail(remove, nl=False)
+    util.pretty('"')
 
 
 def handle_list():
@@ -106,6 +109,7 @@ def handle_get(get):
     '''Handler for getting teleport target.'''
     target = do_get(get)
     util.text_response(target)
+
 
 def handle_prefix(prefix):
     '''Handler for printing prefixes matching "prefix".'''
