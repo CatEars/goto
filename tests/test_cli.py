@@ -30,29 +30,30 @@ def test_named_add():
 def test_remove():
     '''Tests that removing works.'''
     cli.handle_add('testing-remove:./')
-    assert len(storage.list_teleports()) > 0
+    assert storage.list_teleports()
     cli.handle_remove('testing-remove')
-    assert len(storage.list_teleports()) == 0
+    assert not storage.list_teleports()
 
 
 @test_util.custom_home
 def test_list(runner):
     '''Tests that listing works.'''
+    cli.handle_add('testing-remove:/etc')
+    cli.handle_add('test:/var')
+
     with runner.isolation() as outstreams:
-        cli.handle_add('testing-remove:/etc')
-        cli.handle_add('test:/var')
         cli.handle_list()
         streams = outstreams[0].getvalue()
-    lines = streams.decode('utf-8').split('\n')
-    assert 'testing-remove' in lines[0] and '/etc' in lines[0]
-    assert 'testing-remove' in lines[2] and '/etc' in lines[2]
-    assert 'test' in lines[1] and '/var' in lines[1]
-    assert 'test' in lines[3] and '/var' in lines[3]
-    assert '=>' in lines[2] and '=>' in lines[3]
+
+    lines = sorted(streams.decode('utf-8').split('\n'))
+    lines = [x for x in lines if x]
+    assert len(lines) == 2
+    assert 'test' in lines[0] and '/var' in lines[0]
+    assert 'testing-remove' in lines[1] and '/etc' in lines[1]
 
     # Both left sides of the arrow should be the same length so that smaller
     # texts are padded.
-    assert len(lines[2].split('=>')[0]) == len(lines[3].split('=>')[0])
+    assert len(lines[0].split('=>')[0]) == len(lines[1].split('=>')[0])
 
 
 @test_util.custom_home
