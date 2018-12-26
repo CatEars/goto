@@ -21,6 +21,7 @@ jobs:
     name: Zsh Tests
     script: make zsh-tests
   - stage: deploy
+    if: type != cron
     name: Deploy to PyPi
     deploy:
       provider: pypi
@@ -29,3 +30,7 @@ jobs:
         secure: sqLjdtn7KB07tEyMA2dvcBAqbD9xF/5ZrETbMnnuHlbaxPbEt3/ET9PKhldpF9H/QqGaOoJ0DyqycA8QJDnBesoTwGs/gtNdzy0PUlukyKfunPn6VpA6qdIVRgbxJMI8LMyKI324nEAH1415Qnl+5MIOiVz4G4BfYLN4ROrEnWtoxhTJbruOTZvjPQGTaLVHxzOTKugtPBM2JuZDVF7EwGpkoBX4bFmd3YToLoDlB0+RvCcYMyYGfqSMmqM7zNvGgsPE3KWDj8vF1Na+HfONI20KU6IFUbaV96W1qVVyYWAu2nfDUENYBSSNOTyeyMd02gAPo4u+JFO97blclAOtPDBT+18EgVtJ2HFYw5COP+nnFpvwFF8HGj2dd+BTRBPf0B+P2Kvk3In2rXwJwThJlXH+LwAL4Hh6fgTRD430cE5byvrI7FVXi8jxNpsACcpv6XxX0wTIJuwJtSVGtB8MfH3fB45TS6VRTxGa7gZeCKpFWF5dgciWMxn+D97ItzkH8qilS7E3aZyGNrhv7sneX+NwU/ANFnoYqaYtJWZkZ8CtunZSqQXfcXQyfb8J+dmvRw3hfKqBLei+751dAsQeBZJf9CpQDaZIB9aU/uJn8EU0scLTkEiSTJk/5hHgnUagHI6KnN7BwWk0NXGDxG8TPQY/1NmY1c5VHmZ7oGtgKVc=
       on:
         tags: true
+  - stage: cron-shell-tests
+    name: Live Tests
+    if: type = cron
+    script: make live-tests
