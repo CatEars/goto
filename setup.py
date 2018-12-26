@@ -9,7 +9,7 @@ def get_description():
 
 setuptools.setup(
     name="goto-cd",
-    version="0.2.1",
+    version="0.2.2",
     author="Henke Adolfsson",
     author_email="catears13@gmail.com",
     description="Teleport to anywhere on your computer",
@@ -31,7 +31,7 @@ setuptools.setup(
     ],
     python_requires='>=2.7.6,!=3.0.*,!=3.1.*,!=3.2.*',
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
