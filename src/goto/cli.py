@@ -197,7 +197,7 @@ def main(**kwargs):
     '''CLI for teleporting to anywhere on your computer!'''
 
     try:
-        has_prefix = isinstance(kwargs['prefix'], str)
+        has_prefix = kwargs['prefix'] is not None
         has_profile = kwargs['profile'] is not None
         has_rm = kwargs['rmprofile']
         util.cond(
