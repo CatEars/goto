@@ -23,6 +23,7 @@ jobs:
   - stage: deploy
     if: type != cron
     name: Deploy to PyPi
+    script: echo deploying_placeholder
     deploy:
       provider: pypi
       username: catears
