@@ -5,7 +5,7 @@
 ![coverage](https://github.com/CatEars/goto/blob/master/badges/coverage.svg)
 ![Tested With Docker, pytest and Tox](https://img.shields.io/badge/tested%20with-docker%20|%20pytest%20|%20tox-blue.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/catears/goto/badge)](https://www.codefactor.io/repository/github/catears/goto)
-[![saythanks](https://img.shields.io/badge/say-thanks-ffa500.svg?style=for-the-badge)](https://saythanks.io/to/catears)
+[![saythanks](https://img.shields.io/badge/say-thanks-ffa500.svg?style=for-the-badge)](https://saythanks.io/to/CatEars)
 
 🚀 🚀 🚀 A command line tool for teleporting around your computer! 🚀 🚀 🚀
 
