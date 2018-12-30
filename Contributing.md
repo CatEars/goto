@@ -12,25 +12,23 @@ idea of how to best contribute.
 
 * Adaptations for other shells (I've heard `fish` is popular).
 * Improvements for currently supported shells
-* Unit tests
-* Tests in form of user stories
+* Tests (Unit tests, Tests formulated like user stories etc.)
 * MacOS testing
 * PRs that solve obvious bugs
 * Documentation (More Pictures/Videos/Screencasts = More Better)
 * Developer Documentation
 * Issues with reproducible bugs
-* Happy and Professional Discussions
+* Positive and Professional Discussions
 
-## Quite Welcom Contributions
+## Quite Welcome Contributions
 
 * Feature Suggestions
-* Issues with somewhat reproducible bugs
+* Issues where minimal brain capacity is needed to reproduce bugs
 
 ## Kinda Welcome Contributions
 
-* Translation
 * Windows Integration
-* Issues with bugs what only say what went wrong
+* Issues with bugs that only say what went wrong
 
 ## Not So Welcome Contributions
 
@@ -38,7 +36,7 @@ idea of how to best contribute.
 * Issues with bugs that is impossible to understand why they would be bugs and are 100% impossible to reproduce
 * Angry and Unprofessional Discussions
 
-## Banhammer level
+## "Not even going to answer" level "Contributions"
 
 * "Please hire me/Looking for a developer with X/Are you experienced in X?" LinkedIn posts disguised as Issues
 
