@@ -15,7 +15,7 @@
 * Add commonly visited places, like `code/my_project` and teleport to it from anywhere!
 * Did you say you want auto-completion with that? Of course there is auto-completion!
 * Works with both zsh and bash!
-* What if you want to call `my_project` "secret_project" instead? This is entirely possible!
+* What if you want to call `my_project` "secret_project" instead? Goto's got you covered!
 * Do you want different auto completion at different times? We got profiles for that!
 
 ## Unnecessary slogan
