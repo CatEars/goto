@@ -5,7 +5,9 @@
 ![coverage](https://github.com/CatEars/goto/blob/master/badges/coverage.svg)
 [![CodeFactor](https://www.codefactor.io/repository/github/catears/goto/badge)](https://www.codefactor.io/repository/github/catears/goto)
 
-A command line tool for teleporting around your computer!
+[![saythanks](https://img.shields.io/badge/say-thanks-ffa500.svg?style=for-the-badge)](https://saythanks.io/to/catears)
+
+🚀 🚀 🚀 A command line tool for teleporting around your computer! 🚀 🚀 🚀
 
 ![Usage Gif](https://github.com/CatEars/goto/blob/master/docs/simple-usage.gif)
 
