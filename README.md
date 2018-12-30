@@ -3,6 +3,7 @@
 ![build](https://travis-ci.org/CatEars/goto.svg?branch=master)
 [![PyPI version](https://badge.fury.io/py/goto-cd.svg)](https://badge.fury.io/py/goto-cd)
 ![coverage](https://github.com/CatEars/goto/blob/master/badges/coverage.svg)
+[![CodeFactor](https://www.codefactor.io/repository/github/catears/goto/badge)](https://www.codefactor.io/repository/github/catears/goto)
 
 A command line tool for teleporting around your computer!
 

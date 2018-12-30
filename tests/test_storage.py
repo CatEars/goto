@@ -2,13 +2,16 @@
 
 import os
 import os.path
-import goto
-import pytest
 import shutil
+
+import pytest
+
+import goto
+
 try:
-  from pathlib import Path
+    from pathlib import Path
 except ImportError:
-  from pathlib2 import Path
+    from pathlib2 import Path
 
 import test_util
 
@@ -28,21 +31,24 @@ def test_touch_directory_structure():
 
 
 @test_util.custom_home
-def test_get_default_profile_with_nothing():
+def test_get_default_profile_empty():
+    '''Test that default profile is empty if nothing has happened.'''
     data = goto.storage.get_default_profile()
     assert data == dict()
 
 
 @test_util.custom_home
 def test_get_updated_profile():
+    '''Test that a simple update to profile is visible.'''
     pre_data = goto.storage.get_default_profile()
-    goto.storage.update_default_profile({ 'test': 'abcd' })
+    goto.storage.update_default_profile({'test': 'abcd'})
     post_data = goto.storage.get_default_profile()
     assert pre_data != post_data
-    assert post_data == { 'test': 'abcd' }
+    assert post_data == {'test': 'abcd'}
 
 @test_util.custom_home
 def test_no_such_file():
+    '''Test that a named profile is created if it does not exist.'''
     data = goto.storage.get_named_profile('nosuchprofile')
     assert data == dict()
     does_exist = Path(os.environ['XDG_CONFIG_HOME'], 'goto-cd', 'nosuchprofile.toml').exists()
@@ -50,12 +56,14 @@ def test_no_such_file():
 
 @test_util.custom_home
 def test_private_files():
+    '''Test that an exception is raised if underscore files are accessed.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.get_named_profile('_notokay', public_file=True)
 
 
 @test_util.custom_home
 def test_add_profiles():
+    '''Test adding a profile makes it listable.'''
     profiles = goto.storage.list_profiles()
     assert profiles == ['default']
     goto.storage.add_profile('abcd')
@@ -65,6 +73,7 @@ def test_add_profiles():
 
 @test_util.custom_home
 def test_add_profiles_throws():
+    '''Test different exceptions for storage.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.add_profile('_notallowed')
     goto.storage.add_profile('somerandomprofile')
@@ -76,6 +85,7 @@ def test_add_profiles_throws():
 
 @test_util.custom_home
 def test_remove_profile():
+    '''Test removing profile.'''
     files = lambda: os.listdir(goto.storage.get_config_home())
     goto.storage.add_profile('abcd')
     profiles = goto.storage.list_profiles()
@@ -88,7 +98,8 @@ def test_remove_profile():
 
 
 @test_util.custom_home
-def test_add_profile_and_get_teleport():
+def test_profile_with_teleport():
+    '''Test that adding a teleport to a profile works.'''
     files = lambda: os.listdir(goto.storage.get_config_home())
     goto.storage.add_profile('abcd')
     assert set(files()) == set(['default.toml', '_setting.toml', 'abcd.toml'])
@@ -100,16 +111,19 @@ def test_add_profile_and_get_teleport():
 
 @test_util.custom_home
 def test_remove_profile_throws():
+    '''Tests exceptions in remove profile.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.remove_profile('nonexistant')
 
 @test_util.custom_home
-def test_remove_default_profile_throws():
+def test_remove_default_throws():
+    '''Tests that removing the default profile throws.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.remove_profile('default')
 
 @test_util.custom_home
 def test_get_active_profile():
+    '''Test getting the active profile.'''
     assert goto.storage.get_active_profile_name() == 'default'
     goto.storage.add_profile('abcd')
     goto.storage.set_active_profile('abcd')
@@ -118,12 +132,14 @@ def test_get_active_profile():
 
 @test_util.custom_home
 def test_set_active_profile_throws():
+    '''Test that setting active profile has to be an existing profile.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.set_active_profile('nonexistant')
 
 
 @test_util.custom_home
 def test_set_teleport():
+    '''Test basic set teleport functionality.'''
     assert goto.storage.list_teleports() == []
     actual_directory = './'
     goto.storage.set_teleport('thisdir', actual_directory)
@@ -131,6 +147,7 @@ def test_set_teleport():
 
 @test_util.custom_home
 def test_remove_teleport():
+    '''Test removing teleport works.'''
     actual_directory = './'
     goto.storage.set_teleport('thisdir', actual_directory)
     assert goto.storage.list_teleports() == ['thisdir']
@@ -139,6 +156,7 @@ def test_remove_teleport():
 
 @test_util.custom_home
 def test_get_matching_teleports():
+    '''Test getting matching teleports work'''
     added_teleports = [
         ('a', test_util.home_path('./a')),
         ('abcd', test_util.home_path('./abcd')),
@@ -152,15 +170,14 @@ def test_get_matching_teleports():
         assert set(goto.storage.get_matching_teleports('a')) == set(['a', 'abcd'])
         assert set(goto.storage.get_matching_teleports('b')) == set(['b'])
         assert set(goto.storage.get_matching_teleports('')) == set(['a', 'b', 'abcd'])
-    except:
+    finally:
         for _, target in added_teleports:
-            try:
+            if os.path.exists(target):
                 shutil.rmtree(target)
-            except:
-                pass
 
 @test_util.custom_home
 def test_set_teleport_throws():
+    '''Test exceptions are raised for setting teleport.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.set_teleport('abcd', './notanexistantdirectory')
     with pytest.raises(goto.storage.StorageException):
@@ -168,22 +185,28 @@ def test_set_teleport_throws():
 
 @test_util.custom_home
 def test_remove_teleport_throws():
+    '''Test removing nonexistant teleport throws.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.remove_teleport('abcd')
 
 @test_util.custom_home
 def test_get_teleport_target():
+    '''Test getting teleport target works.'''
     abspath = os.path.abspath('./')
     goto.storage.set_teleport('abcd', './')
     assert goto.storage.get_teleport_target('abcd') == abspath
 
+
 @test_util.custom_home
 def test_get_teleport_target_throws():
+    '''Test that getting nonexistant teleport target throws.'''
     with pytest.raises(goto.storage.StorageException):
-      goto.storage.get_teleport_target('abcd')
+        goto.storage.get_teleport_target('abcd')
+
 
 @test_util.custom_home
 def test_home_folder_expands():
+    '''Test that home folder is expanded correctly for teleports.'''
     goto.storage.set_teleport('home', '~')
     home = os.path.expanduser('~')
     assert home == goto.storage.get_teleport_target('home')
