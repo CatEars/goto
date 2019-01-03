@@ -16,8 +16,6 @@ def install_unix(rcfile):
         fhandle.write('# add `goto` function to shell\n')
         fhandle.write('if [ -f {} ]; then\n'.format(goto))
         fhandle.write('  {}\n'.format(source_line))
-        fhandle.write('else\n')
-        fhandle.write('  echo "Could not source {}"\n'.format(goto))
         fhandle.write('fi\n')
 
     if not os.path.exists(dotrc):
