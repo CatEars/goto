@@ -4,9 +4,9 @@
 
 ![GIF Normal Usage](https://github.com/CatEars/goto/raw/master/docs/simple-usage.gif)
 
-To see usage in the form of GIFs, look in the [tldr folder](https://github.com/CatEars/goto/raw/master/docs/tldr/README.md)
+To see usage in the form of GIFs, look in the [tldr folder](https://github.com/CatEars/goto/blob/master/docs/tldr/README.md)
 
-To see usage for each command in a `man` style manual, look in the [manual folder](https://github.com/CatEars/goto/raw/master/docs/manual)
+To see usage for each command in a `man` style manual, look in the [manual folder](https://github.com/CatEars/goto/tree/master/docs/manual)
 
 ## F.A.Q
 
