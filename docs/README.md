@@ -1,8 +1,6 @@
 # Documentation
 
-`goto $NAME`
-
-![GIF Normal Usage](https://github.com/CatEars/goto/raw/master/docs/simple-usage.gif)
+![PNG Normal Usage](https://github.com/CatEars/goto/raw/master/docs/tldrusage.png)
 
 To see usage in the form of GIFs, look in the [tldr folder](https://github.com/CatEars/goto/blob/master/docs/tldr/README.md)
 
