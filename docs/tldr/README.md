@@ -2,10 +2,6 @@
 
 #### TLDR for each command
 
-`goto $NAME`
-
-![GIF Normal Usage](https://github.com/CatEars/goto/raw/master/docs/simple-usage.gif)
-
 `goto --list`
 
 ![GIF Usage of List Command](https://github.com/CatEars/goto/raw/master/docs/tldr/list.gif)

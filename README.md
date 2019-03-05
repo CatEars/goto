@@ -9,15 +9,22 @@
 
 🚀 🚀 🚀 A command line tool for teleporting around your computer! 🚀 🚀 🚀
 
-![Usage Gif](https://github.com/CatEars/goto/blob/master/docs/simple-usage.gif)
+The (very) tldr usage of `goto`:
+
+![Usage Picture](https://github.com/CatEars/goto/blob/master/docs/tldrusage.png)
+
+Gifs and usage documentation can be found in the
+[docs folder](https://github.com/CatEars/goto/blob/master/docs/README.md)
 
 ## Key Features
 
+* Like browser bookmarks, but for the commandline!
 * Add commonly visited places, like `code/my_project` and teleport to it from anywhere!
 * Did you say you want auto-completion with that? Of course there is auto-completion!
 * Works with both zsh and bash!
 * What if you want to call `my_project` "secret_project" instead? Goto's got you covered!
 * Do you want different auto completion at different times? We got profiles for that!
+* Works great as a complement to `j`!
 
 ## Unnecessary slogan
 
