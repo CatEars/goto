@@ -1,7 +1,5 @@
 # Documentation
 
-`goto $NAME`
-
 ![PNG Normal Usage](https://github.com/CatEars/goto/raw/master/docs/tldrusage.png)
 
 To see usage in the form of GIFs, look in the [tldr folder](https://github.com/CatEars/goto/blob/master/docs/tldr/README.md)
