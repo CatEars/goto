@@ -239,6 +239,21 @@ def starts_with_teleport(fpath):
     parts = fpath.split(os.sep)
     return parts[0] in list_teleports()
 
+
 def prefix_can_be_determined(prefix):
     '''Returns true if prefix can complete to a single teleport.'''
     return len(get_matching_teleports(prefix)) == 1
+
+
+def expand_teleport_path(teleport_path):
+    '''Expands the teleport at the beginning of a teleport path and normalizes it.'''
+    if not starts_with_teleport(teleport_path):
+        raise StorageException('"{}" does not start with a teleport'.format(teleport_path))
+    elements = teleport_path.split(os.sep)
+
+    elements[0] = get_teleport_target(elements[0])
+    joined = os.sep.join(elements)
+    ends_with_sep = joined.endswith(os.sep)
+    if not ends_with_sep and os.path.isdir(joined):
+        return '{}{}'.format(joined, os.sep)
+    return joined
