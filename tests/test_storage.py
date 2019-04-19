@@ -15,6 +15,17 @@ except ImportError:
 
 import test_util
 
+def home_path(fpath):
+    '''Returns the path, with a slash at the end.'''
+    fpath = test_util.home_path(fpath)
+    if not fpath.endswith(os.sep):
+        return '{}{}'.format(fpath, os.sep)
+    return fpath
+
+def make_local_dirs(fpath):
+    '''Creates directories like mkdir -p in the home_path of custom_home.'''
+    os.makedirs(home_path(fpath), exist_ok=True)
+
 @test_util.custom_home
 def test_get_home_config():
     '''Test that GetHomeConfig returns a valid directory structure.'''
@@ -260,16 +271,10 @@ def test_prefix_determined():
 @test_util.custom_home
 def test_expand_teleport_path():
     '''Test that a teleport is expanded correctly'''
-    def home_path(x):
-        fpath = test_util.home_path(x)
-        if not fpath.endswith(os.sep):
-            return '{}{}'.format(fpath, os.sep)
-        return fpath
-
     goto.storage.set_teleport('abcd', home_path('.'))
-    os.makedirs(home_path('a/b/c/d'), exist_ok=True)
-    os.makedirs(home_path('a/b/x/zqw'), exist_ok=True)
-    os.makedirs(home_path('q/w'), exist_ok=True)
+    make_local_dirs('a/b/c/d')
+    make_local_dirs('a/b/x/zqw')
+    make_local_dirs('q/w')
 
     cases = [
         (home_path(''), 'abcd'),
@@ -300,26 +305,128 @@ def test_expand_teleport_path():
 
 @test_util.custom_home
 def test_expand_raises():
+    '''Tests that nonexistant teleports raise errors when expanded.'''
     with pytest.raises(goto.storage.StorageException):
         goto.storage.expand_teleport_path('abcd')
 
 
+@test_util.custom_home
+def test_no_expansion():
+    '''Test when no expansion is available and no subpath exists.
+
+    This is a bit of a relic from older times, when goto was just supposed to
+    take you directly to the repo and not expand to subfolders.
+
+    '''
+    corrects = [
+        '',
+        'a',
+        'b',
+        'abcd',
+        'zxcv'
+    ]
+    fails = [
+        os.path.join('ab', os.sep),
+        os.path.join('a', 'b'),
+        os.path.join('a', 'b', os.sep),
+        os.path.join('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'),
+        os.path.join('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', os.sep)
+    ]
+
+    for correct in corrects:
+        assert goto.storage.is_no_expansion(correct)
+    for fail in fails:
+        assert not goto.storage.is_no_expansion(fail)
+
+@test_util.custom_home
+def test_expands_to_directory():
+    '''Tests when expansion is expanded to a directory.'''
+    make_local_dirs('abc/a')
+    make_local_dirs('abc/b')
+    make_local_dirs('abc/c')
+    make_local_dirs('abc/xxx/y/z')
+    goto.storage.set_teleport('abcd', home_path('abc'))
+
+    corrects = [
+        'abcd/'
+        'abcd/a',
+        'abcd/b',
+        'abcd/c',
+        'abcd/xxx',
+        'abcd/xxx/y',
+        'abcd/xxx/y/z'
+    ]
+    fails = [
+        '',
+        'abcd',
+        'abcd/d',
+        'abcd/xx',
+        'abcd/xxx/z'
+    ]
+
+    for correct in corrects:
+        assert goto.storage.is_directory_expansion(correct)
+    for fail in fails:
+        assert not goto.storage.is_directory_expansion(fail)
+
+
+@test_util.custom_home
+def test_expands_to_prefix():
+    '''Tests when an expansion has subpaths and is a prefix (not a directory).'''
+    make_local_dirs('abc/a/bb/cc')
+    make_local_dirs('abc/b')
+    make_local_dirs('abc/c')
+    make_local_dirs('abc/xxx/y/z')
+    goto.storage.set_teleport('abcd', home_path('abc'))
+
+    corrects = [
+        'abcd/xx',
+        'abcd/a/b',
+        'abcd/a/bb/c'
+    ]
+    fails = [
+        'abcd/'
+        'abcd/a',
+        'abcd/b',
+        'abcd/c',
+        'abcd/xxx',
+        'abcd/xxx/y',
+        'abcd/xxx/y/z'
+    ]
+
+    for correct in corrects:
+        assert goto.storage.is_prefix_expansion(correct)
+    for fail in fails:
+        assert not goto.storage.is_prefix_expansion(fail)
+
+
+@test_util.custom_home
+def test_list_subprefixes():
+    '''Tests that we filter subfolders for a teleport.'''
+    make_local_dirs('abc/bbax')
+    make_local_dirs('abc/bbaz')
+    make_local_dirs('abc/bboo')
+    make_local_dirs('abc/xyz')
+    goto.storage.set_teleport('abcd', home_path('abc'))
+
+    cases = [
+        ('abcd/bb', ['bbax', 'bbaz', 'bboo']),
+        ('abcd/bba', ['bbax', 'bbaz']),
+        ('abcd/x', ['xyz'])
+    ]
+
+    for teleport, expected in cases:
+        assert expected == goto.storage.list_subprefixes(teleport)
 
 @test_util.custom_home
 def test_list_subfolders():
     '''Tests that we can list subfolders for a teleport.'''
-    def home_path(x):
-        fpath = test_util.home_path(x)
-        if not fpath.endswith(os.sep):
-            return '{}{}'.format(fpath, os.sep)
-        return fpath
 
     goto.storage.set_teleport('abcd', home_path('.'))
-    os.makedirs(home_path('a/b/c/d'), exist_ok=True)
-    os.makedirs(home_path('a/b/x/zqw'), exist_ok=True)
-    os.makedirs(home_path('q/w'), exist_ok=True)
+    make_local_dirs('a/b/c/d')
+    make_local_dirs('a/b/x/zqw')
+    make_local_dirs('q/w')
 
-    home_path = test_util.home_path
     cases = [
         (home_path('.'), 'abcd', ['a', 'q']),
         (home_path('./a'), 'abcd/a', ['b']),
