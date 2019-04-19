@@ -299,12 +299,25 @@ def test_expand_teleport_path():
 
 
 @test_util.custom_home
+def test_expand_raises():
+    with pytest.raises(goto.storage.StorageException):
+        goto.storage.expand_teleport_path('abcd')
+
+
+
+@test_util.custom_home
 def test_list_subfolders():
     '''Tests that we can list subfolders for a teleport.'''
-    goto.storage.set_teleport('abcd', './')
-    os.makedirs('./a/b/c/d', exist_ok=True)
-    os.makedirs('./a/b/xyz/zyx', exist_ok=True)
-    os.makedirs('./q/w', exist_ok=True)
+    def home_path(x):
+        fpath = test_util.home_path(x)
+        if not fpath.endswith(os.sep):
+            return '{}{}'.format(fpath, os.sep)
+        return fpath
+
+    goto.storage.set_teleport('abcd', home_path('.'))
+    os.makedirs(home_path('a/b/c/d'), exist_ok=True)
+    os.makedirs(home_path('a/b/x/zqw'), exist_ok=True)
+    os.makedirs(home_path('q/w'), exist_ok=True)
 
     home_path = test_util.home_path
     cases = [
@@ -317,7 +330,6 @@ def test_list_subfolders():
         (home_path('./a/b/xyz/zyx'), 'abcd/a/b/xyz/zyx', []),
         (home_path('./q'), 'abcd/q', ['w']),
         (home_path('./q/w'), 'abcd/q/w', []),
-        (home_path('./a/b'), )
     ]
 
     for fpath, teleport, expected in cases:
@@ -325,6 +337,3 @@ def test_list_subfolders():
         assert set(actual) == set(expected)
         listing = os.listdir(fpath)
         assert set(actual) == set(listing)
-        teleport_with_trailing = '{}{}'.format(teleport, os.sep)
-        actual = goto.storage.list_subfolders(teleport_with_trailing)
-        assert set(actual) == set(expected)
