@@ -232,3 +232,9 @@ def get_matching_teleports(prefix):
     '''Returns all teleports matching the prefix.'''
     teleports = list_teleports()
     return [T for T in teleports if T.startswith(prefix)]
+
+
+def starts_with_teleport(fpath):
+    '''Returns true if a path starts with a teleport.'''
+    parts = fpath.split(os.sep)
+    return parts[0] in list_teleports()
