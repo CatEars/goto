@@ -210,3 +210,76 @@ def test_home_folder_expands():
     goto.storage.set_teleport('home', '~')
     home = os.path.expanduser('~')
     assert home == goto.storage.get_teleport_target('home')
+
+
+@test_util.custom_home
+def test_starts_with_teleport():
+    '''Tests that we can determine when a path starts with a teleport.'''
+    goto.storage.set_teleport('abcd', './')
+    goto.storage.set_teleport('abc', './')
+    fails = [
+        'zxcv',
+        'abcdd/',
+        'ab'
+    ]
+    corrects = [
+        'abc',
+        'abcd',
+        'abc/',
+        'abcd/',
+        'abc/s',
+        'abcd/s',
+        'abcd/s/s/s/s'
+    ]
+
+    for fail in fails:
+        assert not goto.storage.starts_with_teleport(fail)
+    for correct in corrects:
+        assert goto.storage.starts_with_teleport(correct)
+
+@test_util.custom_home
+def test_prefix_determined():
+    '''Tests that we can determine when there is exact 1 prefix'''
+    goto.storage.set_teleport('abcd', './')
+    goto.storage.set_teleport('abc', './')
+
+    fails = [
+        'ab', 'a', 'z', 'abc'
+    ]
+    corrects = [
+        'abcd'
+    ]
+
+    for fail in fails:
+        assert not goto.storage.prefix_can_be_determined(fail)
+
+    for correct in corrects:
+        assert goto.storage.prefix_can_be_determined(correct)
+
+
+@test_util.custom_home
+def test_list_subfolders():
+    '''Tests that we can list subfolders for a teleport.'''
+    goto.storage.set_teleport('abcd', './')
+    os.makedirs('./a/b/c/d', exist_ok=True)
+    os.makedirs('./a/b/x/z', exist_ok=True)
+    os.makedirs('./q/w', exist_ok=True)
+
+    home_path = test_util.home_path
+    cases = [
+        (home_path('.'), 'abcd', ['a', 'q']),
+        (home_path('./a'), 'abcd/a', ['b']),
+        (home_path('./a/b'), 'abcd/a/b', ['c', 'x']),
+        (home_path('./a/b/c'), 'abcd/a/b/c', ['d']),
+        (home_path('./a/b/c/d'), 'abcd/a/b/c/d', []),
+        (home_path('./a/b/x'), 'abcd/a/b/x', ['z']),
+        (home_path('./a/b/x/z'), 'abcd/a/b/x/z', []),
+        (home_path('./q'), 'abcd/q', ['w']),
+        (home_path('./q/w'), 'abcd/q/w', []),
+    ]
+
+    for fpath, teleport, expected in cases:
+        actual = goto.storage.list_subfolders(teleport)
+        assert set(actual) == set(expected)
+        listing = os.listdir(fpath)
+        assert set(actual) == set(listing)
