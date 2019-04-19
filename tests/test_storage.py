@@ -258,6 +258,35 @@ def test_prefix_determined():
 
 
 @test_util.custom_home
+def test_expand_teleport_path():
+    '''Test that a teleport is expanded correctly'''
+    goto.storage.set_teleport('abcd', './')
+    os.makedirs('./a/b/c/d', exist_ok=True)
+    os.makedirs('./a/b/x/z', exist_ok=True)
+    os.makedirs('./q/w', exist_ok=True)
+
+    home_path = test_util.home_path
+    cases = [
+        (home_path('.'), 'abcd'),
+        (home_path('./a'), 'abcd/a'),
+        (home_path('./a/b'), 'abcd/a/b'),
+        (home_path('./a/b/c'), 'abcd/a/b/c'),
+        (home_path('./a/b/c/d'), 'abcd/a/b/c/d'),
+        (home_path('./a/b/x'), 'abcd/a/b/x'),
+        (home_path('./a/b/x/z'), 'abcd/a/b/x/z'),
+        (home_path('./q'), 'abcd/q'),
+        (home_path('./q/w'), 'abcd/q/w'),
+    ]
+
+    for expected, teleport in cases:
+        actual = goto.storage.expand_teleport_path(teleport)
+        assert expected == actual
+        with_trailing_slash = '{}{}'.format(teleport, os.sep)
+        actual = goto.storage.expand_teleport_path(teleport)
+        assert expected == actual
+
+
+@test_util.custom_home
 def test_list_subfolders():
     '''Tests that we can list subfolders for a teleport.'''
     goto.storage.set_teleport('abcd', './')
@@ -283,3 +312,7 @@ def test_list_subfolders():
         assert set(actual) == set(expected)
         listing = os.listdir(fpath)
         assert set(actual) == set(listing)
+        teleport_with_trailing = '{}{}'.format(teleport, os.sep)
+        actual = goto.storage.list_subfolders(teleport_with_trailing)
+        assert set(actual) == set(expected)
+
