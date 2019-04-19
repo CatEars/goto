@@ -287,3 +287,15 @@ def list_subprefixes(teleport_path):
     basepath, prefix = os.path.split(teleport_path)
     subfolders = list_subfolders(basepath)
     return [x for x in subfolders if x.startswith(prefix)]
+
+
+def get_directory_expansions(prefix):
+    '''Returns valid expansions for the given directory expandable prefix.'''
+    subfolders = list_subfolders(prefix)
+    return [os.path.join(prefix, x, os.sep) for x in subfolders]
+
+
+def get_prefix_expansions(prefix):
+    '''Returns valid expansions for the given expandable prefix.'''
+    subprefixes = list_subprefixes(prefix)
+    return [os.path.join(prefix, x) for x in subprefixes]
