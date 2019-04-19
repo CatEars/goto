@@ -257,3 +257,33 @@ def expand_teleport_path(teleport_path):
     if not ends_with_sep and os.path.isdir(joined):
         return '{}{}'.format(joined, os.sep)
     return joined
+
+
+def is_no_expansion(teleport_path):
+    '''Returns true if this is a classic style expansion (no subfolders).'''
+    return not os.sep in teleport_path
+
+
+def is_directory_expansion(teleport_path):
+    '''Returns true if the teleport_path expands to a directory.'''
+    return starts_with_teleport(teleport_path) and \
+        os.path.isdir(expand_teleport_path(teleport_path))
+
+
+def is_prefix_expansion(teleport_path):
+    '''Returns true if the teleport_path expands to a prefix (non-directory).'''
+    return starts_with_teleport(teleport_path) and \
+        not os.path.isdir(expand_teleport_path(teleport_path))
+
+
+def list_subfolders(teleport_path):
+    '''Returns a list of the subfolders for the teleport path.'''
+    expanded_path = expand_teleport_path(teleport_path)
+    return os.listdir(expanded_path)
+
+
+def list_subprefixes(teleport_path):
+    '''Returns a list of prefixes fitting the teleport_path.'''
+    basepath, prefix = os.path.split(teleport_path)
+    subfolders = list_subfolders(basepath)
+    return [x for x in subfolders if x.startswith(prefix)]

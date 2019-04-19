@@ -338,6 +338,7 @@ def test_no_expansion():
     for fail in fails:
         assert not goto.storage.is_no_expansion(fail)
 
+
 @test_util.custom_home
 def test_expands_to_directory():
     '''Tests when expansion is expanded to a directory.'''
@@ -348,7 +349,8 @@ def test_expands_to_directory():
     goto.storage.set_teleport('abcd', home_path('abc'))
 
     corrects = [
-        'abcd/'
+        'abcd',
+        'abcd/',
         'abcd/a',
         'abcd/b',
         'abcd/c',
@@ -358,7 +360,6 @@ def test_expands_to_directory():
     ]
     fails = [
         '',
-        'abcd',
         'abcd/d',
         'abcd/xx',
         'abcd/xxx/z'
@@ -385,7 +386,7 @@ def test_expands_to_prefix():
         'abcd/a/bb/c'
     ]
     fails = [
-        'abcd/'
+        'abcd/',
         'abcd/a',
         'abcd/b',
         'abcd/c',
@@ -416,7 +417,8 @@ def test_list_subprefixes():
     ]
 
     for teleport, expected in cases:
-        assert expected == goto.storage.list_subprefixes(teleport)
+        actual = goto.storage.list_subprefixes(teleport)
+        assert set(expected) == set(actual)
 
 @test_util.custom_home
 def test_list_subfolders():
@@ -424,11 +426,10 @@ def test_list_subfolders():
 
     goto.storage.set_teleport('abcd', home_path('.'))
     make_local_dirs('a/b/c/d')
-    make_local_dirs('a/b/x/zqw')
+    make_local_dirs('a/b/xyz/zyx')
     make_local_dirs('q/w')
 
     cases = [
-        (home_path('.'), 'abcd', ['a', 'q']),
         (home_path('./a'), 'abcd/a', ['b']),
         (home_path('./a/b'), 'abcd/a/b', ['c', 'xyz']),
         (home_path('./a/b/c'), 'abcd/a/b/c', ['d']),
