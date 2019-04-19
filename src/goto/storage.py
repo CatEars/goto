@@ -238,3 +238,7 @@ def starts_with_teleport(fpath):
     '''Returns true if a path starts with a teleport.'''
     parts = fpath.split(os.sep)
     return parts[0] in list_teleports()
+
+def prefix_can_be_determined(prefix):
+    '''Returns true if prefix can complete to a single teleport.'''
+    return len(get_matching_teleports(prefix)) == 1
