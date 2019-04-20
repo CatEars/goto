@@ -231,7 +231,7 @@ def get_teleport_target(name):
 def get_matching_teleports(prefix):
     '''Returns all teleports matching the prefix.'''
     teleports = list_teleports()
-    return [T for T in teleports if T.startswith(prefix)]
+    return [T + os.sep for T in teleports if T.startswith(prefix)]
 
 
 def starts_with_teleport(fpath):

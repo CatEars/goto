@@ -184,10 +184,11 @@ def test_get_matching_teleports():
         for name, target in added_teleports:
             os.mkdir(target)
             goto.storage.set_teleport(name, target)
+        get_matching = goto.storage.get_matching_teleports
         assert set(goto.storage.list_teleports()) == set(['a', 'abcd', 'b'])
-        assert set(goto.storage.get_matching_teleports('a')) == set(['a', 'abcd'])
-        assert set(goto.storage.get_matching_teleports('b')) == set(['b'])
-        assert set(goto.storage.get_matching_teleports('')) == set(['a', 'b', 'abcd'])
+        assert set(get_matching('a')) == set(['a/', 'abcd/'])
+        assert set(get_matching('b')) == set(['b/'])
+        assert set(get_matching('')) == set(['a/', 'b/', 'abcd/'])
     finally:
         for _, target in added_teleports:
             if os.path.exists(target):

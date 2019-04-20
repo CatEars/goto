@@ -13,7 +13,7 @@ _GotoHelperFunction() {
 
         # Dirty hack to not expand with a space after subfolder expansion
         len=${#COMPREPLY[@]}
-        if [[ $len -eq 1 ]]; then
+        if [[ $len -eq 1 ]] && [[ $answers == *"/"* ]]; then
             fake="x"
             ans="$answers $answers$fake"
             COMPREPLY=($ans)

@@ -18,8 +18,7 @@ def do_get(name):
     if storage.is_directory_expansion(name):
         expansion = storage.expand_teleport_path(name)
         return expansion
-    util.error('"{}" is not a valid teleport'.format(name))
-    exit(1)
+    raise storage.StorageException('No such teleport "{}"'.format(name))
 
 def do_prefix(prefix):
     '''Returns all the matching teleports for the prefix.'''
