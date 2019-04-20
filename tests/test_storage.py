@@ -27,6 +27,12 @@ def make_local_dirs(fpath):
     '''Creates directories like mkdir -p in the home_path of custom_home.'''
     Path(home_path(fpath)).mkdir(parents=True, exist_ok=True)
 
+def touch_file(fpath):
+    '''Creates an empty file. Similar to `touch` UNIX command.'''
+    fpath = home_path(fpath)[:-1] # Remove trailing slash
+    with open(fpath, 'w') as _:
+        pass
+
 @test_util.custom_home
 def test_get_home_config():
     '''Test that GetHomeConfig returns a valid directory structure.'''
@@ -409,6 +415,9 @@ def test_list_subprefixes():
     make_local_dirs('abc/bbaz')
     make_local_dirs('abc/bboo')
     make_local_dirs('abc/xyz')
+    touch_file('abc/bbbb')
+    touch_file('abc/bbay')
+    touch_file('abc/bbaq')
     goto.storage.set_teleport('abcd', home_path('abc'))
 
     cases = [
@@ -429,6 +438,9 @@ def test_list_subfolders():
     make_local_dirs('a/b/c/d')
     make_local_dirs('a/b/xyz/zyx')
     make_local_dirs('q/w')
+    touch_file('a/bbb')
+    touch_file('a/.gitignore')
+    touch_file('a/b/xyz/.gitignore')
 
     cases = [
         (home_path('./a'), 'abcd/a', ['b']),
@@ -445,6 +457,7 @@ def test_list_subfolders():
         actual = goto.storage.list_subfolders(teleport)
         assert set(actual) == set(expected)
         listing = os.listdir(fpath)
+        listing = [x for x in listing if os.path.isdir(os.path.join(fpath, x))]
         assert set(actual) == set(listing)
 
 @test_util.custom_home
@@ -453,6 +466,8 @@ def test_get_directory_expansions():
     goto.storage.set_teleport('abcd', home_path('.'))
     make_local_dirs('a/b/c')
     make_local_dirs('a/xyz/zyx')
+    touch_file('a/xyzxxx')
+    touch_file('a/.gitignore')
 
     cases = [
         ('abcd/a', ['abcd/a/b/', 'abcd/a/xyz/']),
@@ -472,6 +487,8 @@ def test_get_prefix_expansions():
     goto.storage.set_teleport('abcd', home_path('.'))
     make_local_dirs('a/xyzxyz')
     make_local_dirs('a/xyz/xyz')
+    touch_file('a/xyzxxx')
+    touch_file('a/.gitignore')
 
     cases = [
         ('abcd/a/x', ['abcd/a/xyz/', 'abcd/a/xyzxyz/']),

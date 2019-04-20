@@ -279,7 +279,9 @@ def is_prefix_expansion(teleport_path):
 def list_subfolders(teleport_path):
     '''Returns a list of the subfolders for the teleport path.'''
     expanded_path = expand_teleport_path(teleport_path)
-    return os.listdir(expanded_path)
+    items = os.listdir(expanded_path)
+    fullpaths = [os.path.join(expanded_path, x) for x in items]
+    return [os.path.basename(x) for x in fullpaths if os.path.isdir(x)]
 
 
 def list_subprefixes(teleport_path):
