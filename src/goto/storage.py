@@ -269,7 +269,7 @@ def is_directory_expansion(teleport_path):
     return os.sep in teleport_path and \
         starts_with_teleport(teleport_path) and \
         os.path.isdir(expand_teleport_path(teleport_path)) and \
-        len(list_subprefixes(teleport_path)) == 1
+        len(list_subprefixes(teleport_path)) <= 1
 
 def is_prefix_expansion(teleport_path):
     '''Returns true if the teleport_path expands to a prefix (non-directory).'''
