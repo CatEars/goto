@@ -350,15 +350,14 @@ def test_no_expansion():
 def test_expands_to_directory():
     '''Tests when expansion is expanded to a directory.'''
     make_local_dirs('abc/a')
+    make_local_dirs('abc/aaa')
     make_local_dirs('abc/b')
     make_local_dirs('abc/c')
     make_local_dirs('abc/xxx/y/z')
     goto.storage.set_teleport('abcd', home_path('abc'))
 
     corrects = [
-        'abcd',
-        'abcd/',
-        'abcd/a',
+        'abcd/aaa',
         'abcd/b',
         'abcd/c',
         'abcd/xxx',
@@ -366,6 +365,9 @@ def test_expands_to_directory():
         'abcd/xxx/y/z'
     ]
     fails = [
+        'abcd/',
+        'abcd',
+        'abcd/a',
         '',
         'abcd/d',
         'abcd/xx',
@@ -388,12 +390,12 @@ def test_expands_to_prefix():
     goto.storage.set_teleport('abcd', home_path('abc'))
 
     corrects = [
+        'abcd/',
         'abcd/xx',
         'abcd/a/b',
         'abcd/a/bb/c'
     ]
     fails = [
-        'abcd/',
         'abcd/a',
         'abcd/b',
         'abcd/c',
