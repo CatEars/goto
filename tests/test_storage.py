@@ -446,3 +446,39 @@ def test_list_subfolders():
         assert set(actual) == set(expected)
         listing = os.listdir(fpath)
         assert set(actual) == set(listing)
+
+@test_util.custom_home
+def test_get_directory_expansions():
+    '''Tests that we can get directory expansions.'''
+    goto.storage.set_teleport('abcd', home_path('.'))
+    make_local_dirs('a/b/c')
+    make_local_dirs('a/xyz/zyx')
+
+    cases = [
+        ('abcd/a', ['abcd/a/b/', 'abcd/a/xyz/']),
+        ('abcd/a/b', ['abcd/a/b/c/']),
+        ('abcd/a/b/c', []),
+        ('abcd/a/xyz', ['abcd/a/xyz/zyx/']),
+        ('abcd/a/xyz/zyx', [])
+    ]
+
+    for teleport, expected in cases:
+        actual = goto.storage.get_directory_expansions(teleport)
+        assert set(expected) == set(actual)
+
+@test_util.custom_home
+def test_get_prefix_expansions():
+    '''Tests that we can get prefix expansions.'''
+    goto.storage.set_teleport('abcd', home_path('.'))
+    make_local_dirs('a/xyzxyz')
+    make_local_dirs('a/xyz/xyz')
+
+    cases = [
+        ('abcd/a/x', ['abcd/a/xyz/', 'abcd/a/xyzxyz/']),
+        ('abcd/a/xyzx', ['abcd/a/xyzxyz/']),
+        ('abcd/a/xyz/x', ['abcd/a/xyz/xyz/'])
+    ]
+
+    for teleport, expected in cases:
+        actual = goto.storage.get_prefix_expansions(teleport)
+        assert set(actual) == set(expected)
