@@ -292,7 +292,7 @@ def list_subprefixes(teleport_path):
 def get_directory_expansions(prefix):
     '''Returns valid expansions for the given directory expandable prefix.'''
     subfolders = list_subfolders(prefix)
-    return [os.path.join(prefix, x, os.sep) for x in subfolders]
+    return [os.path.join(prefix, x) + os.sep for x in subfolders]
 
 
 def get_prefix_expansions(prefix):

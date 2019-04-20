@@ -16,9 +16,8 @@ def do_get(name):
     if storage.is_no_expansion(name):
         return storage.get_teleport_target(name)
     elif storage.is_directory_expansion(name):
-        expansions = storage.get_directory_expansions(name)
-        if expansions:
-            return expansions[0]
+        expansion = storage.expand_teleport_path(name)
+        return expansion
     return ''
 
 def do_prefix(prefix):

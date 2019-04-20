@@ -22,9 +22,10 @@ def home_path(fpath):
         return '{}{}'.format(fpath, os.sep)
     return fpath
 
+
 def make_local_dirs(fpath):
     '''Creates directories like mkdir -p in the home_path of custom_home.'''
-    os.makedirs(home_path(fpath), exist_ok=True)
+    Path(home_path(fpath)).mkdir(parents=True, exist_ok=True)
 
 @test_util.custom_home
 def test_get_home_config():
