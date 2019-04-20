@@ -10,6 +10,15 @@ _GotoHelperFunction() {
         # User is trying to jump
         answers="$(_gotohelper --prefix "$cur")"
         COMPREPLY=($answers)
+
+        # Dirty hack to not expand with a space after subfolder expansion
+        len=${#COMPREPLY[@]}
+        if [[ $len -eq 1 ]]; then
+            fake="x"
+            ans="$answers $answers$fake"
+            COMPREPLY=($ans)
+        fi
+
         return
     fi
 
