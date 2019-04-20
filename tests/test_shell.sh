@@ -12,6 +12,8 @@ _gotohelper --install $SHELL
 export PS1="fake interactivity. otherwise we get kicked out of .bashrc"
 source $RCFILE
 
+### Setup complete
+
 cd /tmp
 # Make a/b/c/d, deep levels and top levels a, b, c and d
 mkdir -p a/b/c/d b c d
@@ -96,5 +98,21 @@ fi
 echo "Adding ~"
 if ! goto --add home:~; then
     echo "Could not add with ~!"
+    exit 1
+fi
+
+cd /tmp
+mkdir -p x/y/z
+goto --add xyz:x
+
+RES="$(goto --prefix xyz/)"
+if [[ $RES != "xyz/y/" ]]; then
+    echo "subfolder listing not possible! '$RES'"
+    exit 1
+fi
+
+goto xyz/y/z
+if [[ "$(pwd)" != "/tmp/x/y/z" ]]; then
+    echo "subfolder traversal not possible! $(pwd)"
     exit 1
 fi

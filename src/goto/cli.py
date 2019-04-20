@@ -12,13 +12,23 @@ def do_add(name, target):
 
 
 def do_get(name):
-    '''Returns the target for `name`'''
-    return storage.get_teleport_target(name)
-
+    '''Returns the target for `name`.'''
+    if storage.is_no_expansion(name):
+        return storage.get_teleport_target(name)
+    if storage.is_directory_expansion(name):
+        expansion = storage.expand_teleport_path(name)
+        return expansion
+    return ''
 
 def do_prefix(prefix):
     '''Returns all the matching teleports for the prefix.'''
-    return storage.get_matching_teleports(prefix)
+    if storage.is_no_expansion(prefix):
+        return storage.get_matching_teleports(prefix)
+    if storage.is_directory_expansion(prefix):
+        return storage.get_directory_expansions(prefix)
+    if storage.is_prefix_expansion(prefix):
+        return storage.get_prefix_expansions(prefix)
+    return []
 
 
 def do_remove(name):

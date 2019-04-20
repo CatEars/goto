@@ -232,3 +232,75 @@ def get_matching_teleports(prefix):
     '''Returns all teleports matching the prefix.'''
     teleports = list_teleports()
     return [T for T in teleports if T.startswith(prefix)]
+
+
+def starts_with_teleport(fpath):
+    '''Returns true if a path starts with a teleport.'''
+    parts = fpath.split(os.sep)
+    return parts[0] in list_teleports()
+
+
+def prefix_can_be_determined(prefix):
+    '''Returns true if prefix can complete to a single teleport.'''
+    return len(get_matching_teleports(prefix)) == 1
+
+
+def expand_teleport_path(teleport_path):
+    '''Expands the teleport at beginning of a teleport path and normalizes.'''
+    if not starts_with_teleport(teleport_path):
+        msg = '"{}" does not start with a teleport'.format(teleport_path)
+        raise StorageException(msg)
+    elements = teleport_path.split(os.sep)
+
+    elements[0] = get_teleport_target(elements[0])
+    joined = os.sep.join(elements)
+    ends_with_sep = joined.endswith(os.sep)
+    if not ends_with_sep and os.path.isdir(joined):
+        return '{}{}'.format(joined, os.sep)
+    return joined
+
+
+def is_no_expansion(teleport_path):
+    '''Returns true if this is a classic style expansion (no subfolders).'''
+    return not os.sep in teleport_path
+
+
+def is_directory_expansion(teleport_path):
+    '''Returns true if the teleport_path expands to a directory.'''
+    return os.sep in teleport_path and \
+        starts_with_teleport(teleport_path) and \
+        os.path.isdir(expand_teleport_path(teleport_path)) and \
+        len(list_subprefixes(teleport_path)) <= 1
+
+def is_prefix_expansion(teleport_path):
+    '''Returns true if the teleport_path expands to a prefix (non-directory).'''
+    return starts_with_teleport(teleport_path) and \
+        not is_directory_expansion(teleport_path)
+
+
+def list_subfolders(teleport_path):
+    '''Returns a list of the subfolders for the teleport path.'''
+    expanded_path = expand_teleport_path(teleport_path)
+    items = os.listdir(expanded_path)
+    fullpaths = [os.path.join(expanded_path, x) for x in items]
+    return [os.path.basename(x) for x in fullpaths if os.path.isdir(x)]
+
+
+def list_subprefixes(teleport_path):
+    '''Returns a list of prefixes fitting the teleport_path.'''
+    basepath, prefix = os.path.split(teleport_path)
+    subfolders = list_subfolders(basepath)
+    return [x for x in subfolders if x.startswith(prefix)]
+
+
+def get_directory_expansions(prefix):
+    '''Returns valid expansions for the given directory expandable prefix.'''
+    subfolders = list_subfolders(prefix)
+    return [os.path.join(prefix, x) + os.sep for x in subfolders]
+
+
+def get_prefix_expansions(prefix):
+    '''Returns valid expansions for the given expandable prefix.'''
+    subprefixes = list_subprefixes(prefix)
+    teleport_no_prefix, _ = os.path.split(prefix)
+    return [os.path.join(teleport_no_prefix, x) + os.sep for x in subprefixes]
