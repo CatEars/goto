@@ -90,7 +90,7 @@ fi
 
 echo "Getting prefix for aab, should be an exact string"
 RES="$(goto --prefix aab)"
-if [[ $RES != "aab" ]]; then
+if [[ $RES != "aab/" ]]; then
     echo "Prefix could not find when a perfectly matching prefix existed"
     exit 1
 fi
