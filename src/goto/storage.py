@@ -246,9 +246,10 @@ def prefix_can_be_determined(prefix):
 
 
 def expand_teleport_path(teleport_path):
-    '''Expands the teleport at the beginning of a teleport path and normalizes it.'''
+    '''Expands the teleport at beginning of a teleport path and normalizes.'''
     if not starts_with_teleport(teleport_path):
-        raise StorageException('"{}" does not start with a teleport'.format(teleport_path))
+        msg = '"{}" does not start with a teleport'.format(teleport_path)
+        raise StorageException(msg)
     elements = teleport_path.split(os.sep)
 
     elements[0] = get_teleport_target(elements[0])
@@ -301,5 +302,5 @@ def get_directory_expansions(prefix):
 def get_prefix_expansions(prefix):
     '''Returns valid expansions for the given expandable prefix.'''
     subprefixes = list_subprefixes(prefix)
-    teleport_without_prefix, _ = os.path.split(prefix)
-    return [os.path.join(teleport_without_prefix, x) + os.sep for x in subprefixes]
+    teleport_no_prefix, _ = os.path.split(prefix)
+    return [os.path.join(teleport_no_prefix, x) + os.sep for x in subprefixes]

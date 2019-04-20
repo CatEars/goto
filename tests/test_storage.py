@@ -382,7 +382,7 @@ def test_expands_to_directory():
 
 @test_util.custom_home
 def test_expands_to_prefix():
-    '''Tests when an expansion has subpaths and is a prefix (not a directory).'''
+    '''Tests an expansion has subpaths and is a prefix (not a directory).'''
     make_local_dirs('abc/a/bb/cc')
     make_local_dirs('abc/b')
     make_local_dirs('abc/c')

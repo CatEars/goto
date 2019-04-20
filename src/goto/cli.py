@@ -15,7 +15,7 @@ def do_get(name):
     '''Returns the target for `name`.'''
     if storage.is_no_expansion(name):
         return storage.get_teleport_target(name)
-    elif storage.is_directory_expansion(name):
+    if storage.is_directory_expansion(name):
         expansion = storage.expand_teleport_path(name)
         return expansion
     return ''
@@ -24,9 +24,9 @@ def do_prefix(prefix):
     '''Returns all the matching teleports for the prefix.'''
     if storage.is_no_expansion(prefix):
         return storage.get_matching_teleports(prefix)
-    elif storage.is_directory_expansion(prefix):
+    if storage.is_directory_expansion(prefix):
         return storage.get_directory_expansions(prefix)
-    elif storage.is_prefix_expansion(prefix):
+    if storage.is_prefix_expansion(prefix):
         return storage.get_prefix_expansions(prefix)
     return []
 
