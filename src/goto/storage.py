@@ -108,10 +108,10 @@ def add_profile(name):
     '''Adds a profile.'''
     data = _get_settings()
     if name in data['profiles']:
-        msg = '{} is a profile that already exists'.format(name)
+        msg = 'Error: {} is a profile that already exists'.format(name)
         raise StorageException(msg)
     if name.startswith('_'):
-        msg = '{} - you cannot start profiles with "_"'.format(name)
+        msg = 'Error: {} - you cannot start profiles with "_"'.format(name)
         raise StorageException(msg)
 
     data['profiles'].append(name)
@@ -124,10 +124,10 @@ def remove_profile(name):
     '''Removes a profile.'''
     data = _get_settings()
     if name not in data['profiles']:
-        msg = '{} - not a profile that exists'.format(name)
+        msg = 'Error: {} - not a profile that exists'.format(name)
         raise StorageException(msg)
     if name == 'default':
-        msg = 'you cannot remove the default profile'
+        msg = 'Error: ou cannot remove the default profile'
         raise StorageException(msg)
     data['profiles'].remove(name)
     _update_settings(data)
@@ -143,7 +143,7 @@ def set_active_profile(name):
     '''Sets the current profile.'''
     data = _get_settings()
     if name not in data['profiles']:
-        msg = '{} is not a profile that exists'.format(name)
+        msg = 'Error: {} is not a profile that exists'.format(name)
         raise StorageException(msg)
     data['current_profile'] = name
     _update_settings(data)
@@ -162,13 +162,14 @@ def update_default_profile(data):
 def update_named_profile(name, data):
     '''Updates the values in a named profile.'''
     config_path = os.path.join(get_config_home(), '{}.toml'.format(name))
+    print("writing in ", config_path)
     write_file(config_path, data)
 
 
 def get_named_profile(name, public_file=True):
     '''Returns the data of the specified profile.'''
     if public_file and name.startswith('_'):
-        msg = '{} is an invalid name. Cannot start with "_"'.format(name)
+        msg = 'Error: {} is an invalid name. Cannot start with "_"'.format(name)
         raise StorageException(msg)
 
     fpath = _retrieve_config('{}.toml'.format(name))
@@ -187,18 +188,23 @@ def get_active_profile():
 
 def update_active_profile(data):
     '''Updates the data of the currently active profile.'''
+    print(data)
     update_named_profile(get_active_profile_name(), data)
 
 
 def set_teleport(name, target):
     '''Sets a (new) teleport path for the currently active profile.'''
+    print(name, target)
     path = Path(os.path.expanduser(target))
     if not path.is_dir():
-        raise StorageException('{} is not a directory'.format(target))
+        raise StorageException('Error: {} is not a directory'.format(target))
     if not name:
-        raise StorageException('You must provide a name')
+        raise StorageException('Error: You must provide a name')
     target = str(path.resolve())
     data = get_active_profile()
+
+    print(name, target)
+    print(data)
     data[name] = target
     update_active_profile(data)
 
@@ -207,7 +213,7 @@ def remove_teleport(name):
     '''Removes a teleport from the currently active profile.'''
     data = get_active_profile()
     if not data.get(name):
-        msg = '{} is not a location you can teleport to'.format(name)
+        msg = 'Error: {} is not a location you can teleport to'.format(name)
         raise StorageException(msg)
     del data[name]
     update_active_profile(data)
@@ -223,7 +229,7 @@ def get_teleport_target(name):
     '''Return a teleport target that matches name or throw an error.'''
     data = get_active_profile()
     if name not in data:
-        msg = '{} is not a valid teleport'.format(name)
+        msg = 'Error: {} is not a valid teleport'.format(name)
         raise StorageException(msg)
     return data[name]
 
@@ -248,7 +254,7 @@ def prefix_can_be_determined(prefix):
 def expand_teleport_path(teleport_path):
     '''Expands the teleport at beginning of a teleport path and normalizes.'''
     if not starts_with_teleport(teleport_path):
-        msg = '"{}" does not start with a teleport'.format(teleport_path)
+        msg = 'Error: "{}" does not start with a teleport'.format(teleport_path)
         raise StorageException(msg)
     elements = teleport_path.split(os.sep)
 
@@ -304,3 +310,23 @@ def get_prefix_expansions(prefix):
     subprefixes = list_subprefixes(prefix)
     teleport_no_prefix, _ = os.path.split(prefix)
     return [os.path.join(teleport_no_prefix, x) + os.sep for x in subprefixes]
+
+def set(attr, value):
+    data = _get_settings()
+    data[attr] = int(value)
+    _update_settings(data)
+
+def get(attr):
+    data = _get_settings()
+    if attr not in data:
+        msg = 'Error: {} is not set'.format(attr)
+        raise StorageException(msg)
+    return data[attr]
+
+def remove(attr):
+    data = _get_settings()
+    if attr not in data:
+        msg = 'Error: {} is not set'.format(attr)
+        raise StorageException(msg)
+    del data[attr]
+    _update_settings(data)
