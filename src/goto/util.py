@@ -1,8 +1,7 @@
 '''Utility functions used inside goto.'''
 
 import click
-import config
-#change
+from . import config
 
 def cond(*args):
     '''Advanced conditional branching.'''
