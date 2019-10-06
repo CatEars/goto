@@ -65,7 +65,7 @@ def do_profiles():
 
 def do_set_config(attr, value):
 	'''Sets config of attr to value'''
-    storage.set_config(attr, value)
+	storage.set_config(attr, value)
 
 def do_get_config(attr):
 	'''Returns the configuration of attr'''

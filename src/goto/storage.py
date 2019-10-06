@@ -188,7 +188,7 @@ def get_active_profile():
 
 def update_active_profile(data):
     '''Updates the data of the currently active profile.'''
-    print data
+    print(data)
     update_named_profile(get_active_profile_name(), data)
 
 
@@ -333,4 +333,3 @@ def remove_config(attr):
         raise StorageException(msg)
     del data[attr]
     _update_settings(data)
-    
