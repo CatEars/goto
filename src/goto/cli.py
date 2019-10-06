@@ -4,7 +4,7 @@ import os
 import click
 from . import util
 from . import storage
-from . import install as install_self
+import install as install_self
 
 def do_add(name, target):
     '''Sets a teleport for the active profile.'''
@@ -64,15 +64,15 @@ def do_profiles():
     return chosen_profile, profiles
 
 def do_set_config(attr, value):
-	'''Sets config of attr to value'''
-	storage.set_config(attr, value)
+    '''Sets config of attr to value'''
+    storage.set_config(attr, value)
 
 def do_get_config(attr):
-	'''Returns the configuration of attr'''
+    '''Returns the configuration of attr'''
     return storage.get_config(attr)
 
 def do_rm_config(attr):
-	'''Removes attr from config file'''
+    '''Removes attr from config file'''
     storage.remove_config(attr)
 
 def handle_add(add):
@@ -177,21 +177,21 @@ def handle_install(install):
         util.pretty('to activate it make sure to RESTART your' +
                     'shell, like in the good old days')
 
-def handle_config(config):
-	'''Handler for configuration of settings'''
-    if config[0] == 'set':
-        do_set_config(config[1], config[2])
-        util.detail('{}'.format(config[1]), nl=False)
-        util.detail(' {}'.format(config[0]), nl=False)
+def handle_config(config, configuration):
+    '''Handler for configuration of settings'''
+    if config == 'set':
+        do_set_config(configuration[0], configuration[1])
+        util.detail('{}'.format(configuration[0]), nl=False)
+        util.detail(' {}'.format(config), nl=False)
         util.pretty(' to "', nl=False)
-        util.detail('{}'.format(config[2]), nl=False)
+        util.detail('{}'.format(configuration[1]), nl=False)
         util.pretty('"')
-    elif config[0] == 'get':
-        value = do_get_config(config[1])
+    elif config == 'get':
+        value = do_get_config(configuration[0])
         util.detail('{}\n'.format(value), nl=False)
-    elif config[0] == 'remove':
-        do_rm_config(config[1])
-        util.detail('{}'.format(config[1]), nl=False)
+    elif config == 'remove':
+        do_rm_config(configuration[0])
+        util.detail('{}'.format(configuration[0]), nl=False)
         util.pretty(' removed from config\n', nl=False)
 
 def print_help():
@@ -211,12 +211,13 @@ HELP = {
     'profile': 'Switch to a (possibly non-existant) profile',
     'profiles': 'List all profiles',
     'install': 'Install goto for the given shell, "bash" or "zsh"',
-    'config': 'Configure behaviour of goto (get/set/remove attribute value or -1)'
+    'config': 'Configure behaviour get/set/remove'
 }
 
 BASH_ZSH = click.Choice(['bash', 'zsh'])
 
 @click.command()
+@click.argument('configuration', nargs=-1)
 @click.option('--add', '-a', default='', help=HELP['add'])
 @click.option('--get', '-g', default='', help=HELP['get'])
 @click.option('--prefix', default=None, help=HELP['prefix'])
@@ -226,8 +227,8 @@ BASH_ZSH = click.Choice(['bash', 'zsh'])
 @click.option('--profile', '-p', default=None, help=HELP['profile'])
 @click.option('--profiles', is_flag=True, default=False, help=HELP['profiles'])
 @click.option('--install', required=False, type=BASH_ZSH, help=HELP['install'])
-@click.option('--config', default='', nargs=3, help=HELP['config'])
-def main(**kwargs):
+@click.option('--config', default='', help=HELP['config'])
+def main(configuration, **kwargs):
     '''CLI for teleporting to anywhere on your computer!'''
     try:
         has_prefix = kwargs['prefix'] is not None
@@ -243,7 +244,7 @@ def main(**kwargs):
             (has_profile, lambda: handle_profile(kwargs['profile'])),
             (kwargs['profiles'], handle_profiles),
             (kwargs['install'], lambda: handle_install(kwargs['install'])),
-            (kwargs['config'], lambda: handle_config(kwargs['config'])),
+            (kwargs['config'], lambda: handle_config(kwargs['config'], configuration)),
             (True, print_help)
         )()
     except storage.StorageException as exception:

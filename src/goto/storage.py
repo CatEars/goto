@@ -6,7 +6,6 @@ try:
     from pathlib import Path
 except ImportError:
     from pathlib2 import Path
-
 from . import util
 
 class StorageException(Exception):
@@ -82,7 +81,6 @@ def _write_default_file():
     fpath = os.path.join(home, 'default.toml')
     write_file(fpath, {})
 
-
 def _get_settings():
     '''Returns the configuration settings.'''
     fname = '_setting.toml'
@@ -108,15 +106,16 @@ def add_profile(name):
     '''Adds a profile.'''
     data = _get_settings()
     if name in data['profiles']:
-        msg = 'Error: {} is a profile that already exists'.format(name)
+        msg = '{} is a profile that already exists'.format(name)
         raise StorageException(msg)
     if name.startswith('_'):
-        msg = 'Error: {} - you cannot start profiles with "_"'.format(name)
+        msg = '{} - you cannot start profiles with "_"'.format(name)
         raise StorageException(msg)
 
     data['profiles'].append(name)
     _update_settings(data)
     fpath = os.path.join(get_config_home(), '{}.toml'.format(name))
+    print(fpath)
     write_file(fpath, {})
 
 
@@ -124,10 +123,10 @@ def remove_profile(name):
     '''Removes a profile.'''
     data = _get_settings()
     if name not in data['profiles']:
-        msg = 'Error: {} - not a profile that exists'.format(name)
+        msg = '{} - not a profile that exists'.format(name)
         raise StorageException(msg)
     if name == 'default':
-        msg = 'Error: ou cannot remove the default profile'
+        msg = 'You cannot remove the default profile'
         raise StorageException(msg)
     data['profiles'].remove(name)
     _update_settings(data)
@@ -197,14 +196,14 @@ def set_teleport(name, target):
     print(name, target)
     path = Path(os.path.expanduser(target))
     if not path.is_dir():
-        raise StorageException('Error: {} is not a directory'.format(target))
+        raise StorageException('{} is not a directory'.format(target))
     if not name:
-        raise StorageException('Error: You must provide a name')
+        raise StorageException('You must provide a name')
     target = str(path.resolve())
     data = get_active_profile()
 
     print(name, target)
-    print data
+    print(data)
     data[name] = target
     update_active_profile(data)
 
@@ -213,7 +212,7 @@ def remove_teleport(name):
     '''Removes a teleport from the currently active profile.'''
     data = get_active_profile()
     if not data.get(name):
-        msg = 'Error: {} is not a location you can teleport to'.format(name)
+        msg = '{} is not a location you can teleport to'.format(name)
         raise StorageException(msg)
     del data[name]
     update_active_profile(data)
@@ -229,7 +228,7 @@ def get_teleport_target(name):
     '''Return a teleport target that matches name or throw an error.'''
     data = get_active_profile()
     if name not in data:
-        msg = 'Error: {} is not a valid teleport'.format(name)
+        msg = '{} is not a valid teleport'.format(name)
         raise StorageException(msg)
     return data[name]
 
@@ -254,7 +253,7 @@ def prefix_can_be_determined(prefix):
 def expand_teleport_path(teleport_path):
     '''Expands the teleport at beginning of a teleport path and normalizes.'''
     if not starts_with_teleport(teleport_path):
-        msg = 'Error: "{}" does not start with a teleport'.format(teleport_path)
+        msg = '"{}" does not start with a teleport'.format(teleport_path)
         raise StorageException(msg)
     elements = teleport_path.split(os.sep)
 
@@ -314,14 +313,14 @@ def get_prefix_expansions(prefix):
 def set_config(attr, value):
     '''sets attr to value'''
     data = _get_settings()
-    data[attr] = int(value)
+    data[attr] = value
     _update_settings(data)
 
 def get_config(attr):
     '''gets the value of attr from config file'''
     data = _get_settings()
     if attr not in data:
-        msg = 'Error: {} is not set'.format(attr)
+        msg = '{} is not set'.format(attr)
         raise StorageException(msg)
     return data[attr]
 
@@ -329,7 +328,7 @@ def remove_config(attr):
     '''removes attr from config file'''
     data = _get_settings()
     if attr not in data:
-        msg = 'Error: {} is not set'.format(attr)
+        msg = '{} is not set'.format(attr)
         raise StorageException(msg)
     del data[attr]
     _update_settings(data)
