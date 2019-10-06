@@ -63,14 +63,17 @@ def do_profiles():
     chosen_profile = storage.get_active_profile_name()
     return chosen_profile, profiles
 
-def do_set(attr, value):
-    storage.set(attr, value)
+def do_set_config(attr, value):
+	'''Sets config of attr to value'''
+    storage.set_config(attr, value)
 
-def do_get(attr):
-    return storage.get(attr)
+def do_get_config(attr):
+	'''Returns the configuration of attr'''
+    return storage.get_config(attr)
 
-def do_rmattr(attr):
-    storage.remove(attr)
+def do_rm_config(attr):
+	'''Removes attr from config file'''
+    storage.remove_config(attr)
 
 def handle_add(add):
     '''Handler for adding a target.'''
@@ -151,7 +154,6 @@ def handle_profile(profile):
     util.pretty('Changed to profile: ', nl=False)
     util.detail(profile)
 
-
 def handle_profiles():
     '''Handler for listing profiles.'''
     chosen_profile, profiles = do_profiles()
@@ -176,18 +178,19 @@ def handle_install(install):
                     'shell, like in the good old days')
 
 def handle_config(config):
-    if(config[0] == 'set'): 
-        do_set(config[1], config[2])
+	'''Handler for configuration of settings'''
+    if config[0] == 'set':
+        do_set_config(config[1], config[2])
         util.detail('{}'.format(config[1]), nl=False)
         util.detail(' {}'.format(config[0]), nl=False)
         util.pretty(' to "', nl=False)
         util.detail('{}'.format(config[2]), nl=False)
         util.pretty('"')
-    elif(config[0] == 'get'):
-        value = do_get(config[1])
+    elif config[0] == 'get':
+        value = do_get_config(config[1])
         util.detail('{}\n'.format(value), nl=False)
-    elif(config[0] == 'remove'):
-        do_rmattr(config[1])
+    elif config[0] == 'remove':
+        do_rm_config(config[1])
         util.detail('{}'.format(config[1]), nl=False)
         util.pretty(' removed from config\n', nl=False)
 
@@ -223,7 +226,7 @@ BASH_ZSH = click.Choice(['bash', 'zsh'])
 @click.option('--profile', '-p', default=None, help=HELP['profile'])
 @click.option('--profiles', is_flag=True, default=False, help=HELP['profiles'])
 @click.option('--install', required=False, type=BASH_ZSH, help=HELP['install'])
-@click.option('--config', default='', nargs =3, help=HELP['config'])
+@click.option('--config', default='', nargs=3, help=HELP['config'])
 def main(**kwargs):
     '''CLI for teleporting to anywhere on your computer!'''
     try:

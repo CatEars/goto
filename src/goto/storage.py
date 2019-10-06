@@ -188,7 +188,7 @@ def get_active_profile():
 
 def update_active_profile(data):
     '''Updates the data of the currently active profile.'''
-    print(data)
+    print data
     update_named_profile(get_active_profile_name(), data)
 
 
@@ -204,7 +204,7 @@ def set_teleport(name, target):
     data = get_active_profile()
 
     print(name, target)
-    print(data)
+    print data
     data[name] = target
     update_active_profile(data)
 
@@ -311,22 +311,26 @@ def get_prefix_expansions(prefix):
     teleport_no_prefix, _ = os.path.split(prefix)
     return [os.path.join(teleport_no_prefix, x) + os.sep for x in subprefixes]
 
-def set(attr, value):
+def set_config(attr, value):
+    '''sets attr to value'''
     data = _get_settings()
     data[attr] = int(value)
     _update_settings(data)
 
-def get(attr):
+def get_config(attr):
+    '''gets the value of attr from config file'''
     data = _get_settings()
     if attr not in data:
         msg = 'Error: {} is not set'.format(attr)
         raise StorageException(msg)
     return data[attr]
 
-def remove(attr):
+def remove_config(attr):
+    '''removes attr from config file'''
     data = _get_settings()
     if attr not in data:
         msg = 'Error: {} is not set'.format(attr)
         raise StorageException(msg)
     del data[attr]
     _update_settings(data)
+    
