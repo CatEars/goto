@@ -115,7 +115,6 @@ def add_profile(name):
     data['profiles'].append(name)
     _update_settings(data)
     fpath = os.path.join(get_config_home(), '{}.toml'.format(name))
-    print(fpath)
     write_file(fpath, {})
 
 
@@ -187,13 +186,10 @@ def get_active_profile():
 
 def update_active_profile(data):
     '''Updates the data of the currently active profile.'''
-    print(data)
     update_named_profile(get_active_profile_name(), data)
-
 
 def set_teleport(name, target):
     '''Sets a (new) teleport path for the currently active profile.'''
-    print(name, target)
     path = Path(os.path.expanduser(target))
     if not path.is_dir():
         raise StorageException('{} is not a directory'.format(target))
@@ -201,12 +197,8 @@ def set_teleport(name, target):
         raise StorageException('You must provide a name')
     target = str(path.resolve())
     data = get_active_profile()
-
-    print(name, target)
-    print(data)
     data[name] = target
     update_active_profile(data)
-
 
 def remove_teleport(name):
     '''Removes a teleport from the currently active profile.'''

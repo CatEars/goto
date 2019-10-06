@@ -4,7 +4,7 @@ import os
 import click
 from . import util
 from . import storage
-import install as install_self
+from . import install as install_self
 
 def do_add(name, target):
     '''Sets a teleport for the active profile.'''
@@ -244,7 +244,8 @@ def main(configuration, **kwargs):
             (has_profile, lambda: handle_profile(kwargs['profile'])),
             (kwargs['profiles'], handle_profiles),
             (kwargs['install'], lambda: handle_install(kwargs['install'])),
-            (kwargs['config'], lambda: handle_config(kwargs['config'], configuration)),
+            (kwargs['config'], lambda: handle_config(kwargs['config'],
+                                                    configuration)),
             (True, print_help)
         )()
     except storage.StorageException as exception:
