@@ -8,6 +8,8 @@ except ImportError:
     from pathlib2 import Path
 from . import util
 
+ALLOWED_SETTING_KEYS = set(['test_key', 'example_key'])
+
 class StorageException(Exception):
     '''Exception with the storage engine of goto.'''
 
@@ -304,6 +306,9 @@ def get_prefix_expansions(prefix):
 
 def set_config(attr, value):
     '''sets attr to value'''
+    if attr not in ALLOWED_SETTING_KEYS:
+        msg = '"{}" is an invalid key for the config'.format(attr)
+        raise StorageException(msg) 
     data = _get_settings()
     data[attr] = value
     _update_settings(data)
