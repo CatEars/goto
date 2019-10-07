@@ -308,7 +308,7 @@ def set_config(attr, value):
     '''sets attr to value'''
     if attr not in ALLOWED_SETTING_KEYS:
         msg = '"{}" is an invalid key for the config'.format(attr)
-        raise StorageException(msg) 
+        raise StorageException(msg)
     data = _get_settings()
     data[attr] = value
     _update_settings(data)
