@@ -57,13 +57,23 @@ def do_profile(profile):
         storage.add_profile(profile)
     storage.set_active_profile(profile)
 
-
 def do_profiles():
     '''Returns a tuple of (currently active profile, all profiles)'''
     profiles = storage.list_profiles()
     chosen_profile = storage.get_active_profile_name()
     return chosen_profile, profiles
 
+def do_set_config(attr, value):
+    '''Sets config of attr to value'''
+    storage.set_config(attr, value)
+
+def do_get_config(attr):
+    '''Returns the configuration of attr'''
+    return storage.get_config(attr)
+
+def do_rm_config(attr):
+    '''Removes attr from config file'''
+    storage.remove_config(attr)
 
 def handle_add(add):
     '''Handler for adding a target.'''
@@ -144,7 +154,6 @@ def handle_profile(profile):
     util.pretty('Changed to profile: ', nl=False)
     util.detail(profile)
 
-
 def handle_profiles():
     '''Handler for listing profiles.'''
     chosen_profile, profiles = do_profiles()
@@ -168,6 +177,22 @@ def handle_install(install):
         util.pretty('to activate it make sure to RESTART your' +
                     'shell, like in the good old days')
 
+def handle_config(config, configuration):
+    '''Handler for configuration of settings'''
+    if config == 'set':
+        do_set_config(configuration[0], configuration[1])
+        util.detail('{}'.format(configuration[0]), nl=False)
+        util.detail(' {}'.format(config), nl=False)
+        util.pretty(' to "', nl=False)
+        util.detail('{}'.format(configuration[1]), nl=False)
+        util.pretty('"')
+    elif config == 'get':
+        value = do_get_config(configuration[0])
+        util.detail('{}\n'.format(value), nl=False)
+    elif config == 'remove':
+        do_rm_config(configuration[0])
+        util.detail('{}'.format(configuration[0]), nl=False)
+        util.pretty(' removed from config\n', nl=False)
 
 def print_help():
     '''Prints help text and exists with non-zero exit code.'''
@@ -185,12 +210,14 @@ HELP = {
     'rmprofile': 'Remove a profile',
     'profile': 'Switch to a (possibly non-existant) profile',
     'profiles': 'List all profiles',
-    'install': 'Install goto for the given shell, "bash" or "zsh"'
+    'install': 'Install goto for the given shell, "bash" or "zsh"',
+    'config': 'Configure behaviour get/set/remove'
 }
 
 BASH_ZSH = click.Choice(['bash', 'zsh'])
 
 @click.command()
+@click.argument('configuration', nargs=-1)
 @click.option('--add', '-a', default='', help=HELP['add'])
 @click.option('--get', '-g', default='', help=HELP['get'])
 @click.option('--prefix', default=None, help=HELP['prefix'])
@@ -200,9 +227,9 @@ BASH_ZSH = click.Choice(['bash', 'zsh'])
 @click.option('--profile', '-p', default=None, help=HELP['profile'])
 @click.option('--profiles', is_flag=True, default=False, help=HELP['profiles'])
 @click.option('--install', required=False, type=BASH_ZSH, help=HELP['install'])
-def main(**kwargs):
+@click.option('--config', default='', help=HELP['config'])
+def main(configuration, **kwargs):
     '''CLI for teleporting to anywhere on your computer!'''
-
     try:
         has_prefix = kwargs['prefix'] is not None
         has_profile = kwargs['profile'] is not None
@@ -217,6 +244,8 @@ def main(**kwargs):
             (has_profile, lambda: handle_profile(kwargs['profile'])),
             (kwargs['profiles'], handle_profiles),
             (kwargs['install'], lambda: handle_install(kwargs['install'])),
+            (kwargs['config'], lambda: handle_config(kwargs['config'],
+                                                    configuration)),
             (True, print_help)
         )()
     except storage.StorageException as exception:

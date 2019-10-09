@@ -6,8 +6,9 @@ try:
     from pathlib import Path
 except ImportError:
     from pathlib2 import Path
-
 from . import util
+
+ALLOWED_SETTING_KEYS = set(['test_key', 'example_key'])
 
 class StorageException(Exception):
     '''Exception with the storage engine of goto.'''
@@ -82,7 +83,6 @@ def _write_default_file():
     fpath = os.path.join(home, 'default.toml')
     write_file(fpath, {})
 
-
 def _get_settings():
     '''Returns the configuration settings.'''
     fname = '_setting.toml'
@@ -127,7 +127,7 @@ def remove_profile(name):
         msg = '{} - not a profile that exists'.format(name)
         raise StorageException(msg)
     if name == 'default':
-        msg = 'you cannot remove the default profile'
+        msg = 'You cannot remove the default profile'
         raise StorageException(msg)
     data['profiles'].remove(name)
     _update_settings(data)
@@ -143,7 +143,7 @@ def set_active_profile(name):
     '''Sets the current profile.'''
     data = _get_settings()
     if name not in data['profiles']:
-        msg = '{} is not a profile that exists'.format(name)
+        msg = 'Error: {} is not a profile that exists'.format(name)
         raise StorageException(msg)
     data['current_profile'] = name
     _update_settings(data)
@@ -168,7 +168,7 @@ def update_named_profile(name, data):
 def get_named_profile(name, public_file=True):
     '''Returns the data of the specified profile.'''
     if public_file and name.startswith('_'):
-        msg = '{} is an invalid name. Cannot start with "_"'.format(name)
+        msg = 'Error: {} is an invalid name. Cannot start with "_"'.format(name)
         raise StorageException(msg)
 
     fpath = _retrieve_config('{}.toml'.format(name))
@@ -189,7 +189,6 @@ def update_active_profile(data):
     '''Updates the data of the currently active profile.'''
     update_named_profile(get_active_profile_name(), data)
 
-
 def set_teleport(name, target):
     '''Sets a (new) teleport path for the currently active profile.'''
     path = Path(os.path.expanduser(target))
@@ -201,7 +200,6 @@ def set_teleport(name, target):
     data = get_active_profile()
     data[name] = target
     update_active_profile(data)
-
 
 def remove_teleport(name):
     '''Removes a teleport from the currently active profile.'''
@@ -304,3 +302,29 @@ def get_prefix_expansions(prefix):
     subprefixes = list_subprefixes(prefix)
     teleport_no_prefix, _ = os.path.split(prefix)
     return [os.path.join(teleport_no_prefix, x) + os.sep for x in subprefixes]
+
+def set_config(attr, value):
+    '''sets attr to value'''
+    if attr not in ALLOWED_SETTING_KEYS:
+        msg = '"{}" is an invalid key for the config'.format(attr)
+        raise StorageException(msg)
+    data = _get_settings()
+    data[attr] = value
+    _update_settings(data)
+
+def get_config(attr):
+    '''gets the value of attr from config file'''
+    data = _get_settings()
+    if attr not in data:
+        msg = '{} is not set'.format(attr)
+        raise StorageException(msg)
+    return data[attr]
+
+def remove_config(attr):
+    '''removes attr from config file'''
+    data = _get_settings()
+    if attr not in data:
+        msg = '{} is not set'.format(attr)
+        raise StorageException(msg)
+    del data[attr]
+    _update_settings(data)
