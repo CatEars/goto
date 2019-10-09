@@ -162,7 +162,6 @@ def update_default_profile(data):
 def update_named_profile(name, data):
     '''Updates the values in a named profile.'''
     config_path = os.path.join(get_config_home(), '{}.toml'.format(name))
-    print("writing in ", config_path)
     write_file(config_path, data)
 
 

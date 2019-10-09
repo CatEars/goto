@@ -8,8 +8,8 @@ Basic
 
 ```bash
 $ goto --config set attribute value
-$ goto --config get attribute -1
-$ goto --config remove attribute -1
+$ goto --config get attribute
+$ goto --config remove attribute
 ```
 
 ### Effect
@@ -20,4 +20,3 @@ $ goto --config remove attribute -1
 
 ### Notes
 
-`get` and `remove` need -1 as the module click doesn't allow variable length arguements
