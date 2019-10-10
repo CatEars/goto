@@ -1,6 +1,11 @@
 '''Installation module for Goto.'''
 import os
 
+def append_newline(source_lines):
+    '''Add operating system newlines to source lines.'''
+    return [
+        x + os.linesep for x in source_lines
+    ]
 
 def install_general(rcpath_from_home, sourcing_line, source_lines):
     '''Install working for both windows and unix systems.'''
@@ -42,7 +47,7 @@ def install_unix(rcfile):
         '  {}'.format(sourcing_line),
         'fi'
     ]
-    install_general(rcfile, sourcing_line, source_lines)
+    install_general(rcfile, sourcing_line, append_newline(source_lines))
 
 
 def install_windows():
@@ -63,7 +68,7 @@ def install_windows():
     ]
 
     profile = 'Documents\\WindowsPowerShell\\Profile.ps1'
-    install_general(profile, sourcing_line, source_lines)
+    install_general(profile, sourcing_line, append_newline(source_lines))
 
 
 def install_bash():
