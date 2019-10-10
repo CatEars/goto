@@ -18,7 +18,7 @@ function goto() {
         fi
     else
         # We are dealing with a command + argument
-        $GT $A $B
+        $GT $A $B $3 $4
     fi
 }
 
