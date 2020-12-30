@@ -10,3 +10,5 @@ edition = "2018"
 dirs = "3.0.1"
 toml = "0.5.3"
 serde = { version = "1.0.117", features = ["derive"] }
+clap = "3.0.0-beta.2"
+term = "0.6.1"

@@ -1,68 +1,106 @@
-use dirs::config_dir;
-use toml::Value;
-use std::fs;
-use serde::{Serialize, Deserialize};
-use std::io::Write;
+extern crate term;
 
-#[derive(Serialize, Deserialize)]
-struct Config {
-    current_profile: String,
-    profiles: Vec<String>,
+mod storage;
+use std::cmp::max;
+use clap::{App, Arg};
+use storage::{ensure_directory_structure, get_current_profile};
+
+fn parse_opts() -> clap::ArgMatches {
+    return App::new("Goto")
+        .version("2.0")
+        .author("Henrik 'CatEars' A. <catears13@gmail.com>")
+        .about("Give your terminal teleporting powers")
+        .arg(
+            Arg::new("add")
+                .short('a')
+                .long("add")
+                .about("Add a new teleport to the current profile")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::new("get")
+                .short('g')
+                .long("get")
+                .about("Print a teleport target.")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::new("prefix")
+                .long("prefix")
+                .about("List all targets that have X as prefix")
+                .takes_value(true),
+        )
+        .arg(Arg::new("remove")
+             .short('r')
+             .long("remove")
+             .about("Remove a teleport from the current profile")
+             .takes_value(true)
+        )
+        .arg(
+            Arg::new("list")
+                .short('l')
+                .long("list")
+                .about("Lists all teleports")
+        )
+        .get_matches();
 }
 
-fn parse_config_toml(config_name: &str) -> String {
-    let mut cfg = config_dir().unwrap();
-    cfg.push("goto-cd");
-    cfg.push(format!("{}.toml", config_name));
-    return fs::read_to_string(cfg).unwrap()
-}
+/*
+Usage: _gotohelper [OPTIONS]
 
-fn parse_config() -> Config {
-    return toml::from_str(&parse_config_toml("_setting")).unwrap();
-}
+CLI for teleporting to anywhere on your computer!
 
-fn parse_profile(profile_name: &str) -> Value {
-    return parse_config_toml(profile_name)
-        .parse::<Value>()
-        .unwrap();
-}
+Options:
+-a, --add TEXT        Add a teleport ([name:]path/to/directory)
+-g, --get TEXT        Print a teleport target
+--prefix TEXT         List all targets that have X as prefix
+-r, --remove TEXT     Remove a teleport
+-l, --list            List all teleports
+-m, --rmprofile TEXT  Remove a profile
+-p, --profile TEXT    Switch to a (possibly non-existant) profile
+--profiles            List all profiles
+--install [bash|zsh]  Install goto for the given shell, "bash" or "zsh"
+--help                Show this message and exit.
+ */
 
-fn ensure_directory_structure() {
-    let mut cfg1 = config_dir().unwrap();
-    cfg1.push("goto-cd2");
-    if !cfg1.exists() {
-        println!("{} does not exist! Creating!", cfg1.display());
-        fs::create_dir_all(cfg1).unwrap();
+fn list_profile() {
+    let mut t = term::stdout().unwrap();
+
+    let profile = get_current_profile();
+    let key_length = profile
+        .keys()
+        .map(|x| x.len())
+        .fold(0, |a, b| max(a, b));
+
+    for k in profile.keys() {
+        t.fg(term::color::GREEN).unwrap();
+        write!(t, "{:<width$}", k, width = key_length + 1).unwrap();
+        t.fg(term::color::WHITE).unwrap();
+        write!(t, " -> ").unwrap();
+        t.fg(term::color::GREEN).unwrap();
+        let x = profile[k].as_str().unwrap();
+        writeln!(t, "{}", x).unwrap();
     }
 
-    let mut cfg2 = config_dir().unwrap();
-    cfg2.push("goto-cd2");
-    cfg2.push("_setting.toml");
-    if !cfg2.exists() {
-        println!("{} does not exist! Writing default", cfg2.display());
-        let default_config = Config {
-            current_profile: String::from("default"),
-            profiles: vec![String::from("default")]
-        };
-        let config_str = toml::to_string(&default_config).unwrap();
-        let mut file = fs::File::create(cfg2).unwrap();
-        write!(file, "{}", config_str).unwrap();
-
-        let mut profile = config_dir().unwrap();
-        profile.push("goto-cd2");
-        profile.push("default.toml");
-        println!("{} does not exist! Writing default", profile.display());
-        fs::File::create(profile).unwrap();
-    }
+    t.reset().unwrap();
 }
 
 fn main() {
     ensure_directory_structure();
-    let setting = parse_config();
-    println!("== config ==\n{}", setting.current_profile);
+    let matches = parse_opts();
 
-    let profile_name = setting.current_profile;
-
-    let profile = parse_profile(&profile_name);
-    println!("== profile ==\n{}", profile);
+    if let Some(x) = matches.value_of("add") {
+        println!("Add={}", x);
+    } else if let Some(x) = matches.value_of("get") {
+        println!("Get={}", x);
+    } else if let Some(x) = matches.value_of("prefix") {
+        println!("Prefix={}", x);
+    } else if let Some(x) = matches.value_of("remove") {
+        println!("Remove={}", x);
+    } else if matches.occurrences_of("list") == 1 {
+        list_profile();
+    } else {
+        println!("Oh noes, not valid, lol =P");
+        panic!("I am the panic");
+    }
 }
