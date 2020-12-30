@@ -85,6 +85,26 @@ fn list_profile() {
     t.reset().unwrap();
 }
 
+fn get_from_profile(key: &str) {
+    let mut t = term::stdout().unwrap();
+
+    let profile = get_current_profile();
+    let ans = profile.get(key);
+
+    match ans {
+        Some(x) => {
+            let v = x.as_str().unwrap();
+            writeln!(t, "{}", v).unwrap();
+        },
+        _ => {
+            t.fg(term::color::RED).unwrap();
+            writeln!(t, "{} is not a valid teleport.", key).unwrap();
+            t.reset().unwrap();
+        }
+    }
+
+}
+
 fn main() {
     ensure_directory_structure();
     let matches = parse_opts();
@@ -92,7 +112,7 @@ fn main() {
     if let Some(x) = matches.value_of("add") {
         println!("Add={}", x);
     } else if let Some(x) = matches.value_of("get") {
-        println!("Get={}", x);
+        get_from_profile(x);
     } else if let Some(x) = matches.value_of("prefix") {
         println!("Prefix={}", x);
     } else if let Some(x) = matches.value_of("remove") {
