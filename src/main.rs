@@ -64,17 +64,18 @@ Options:
  */
 
 fn list_profile() {
-    let mut t = term::stdout().unwrap();
+    let msg = "Need access to the terminal, but couldn't get that";
+    let mut t = term::stdout().expect(msg);
 
-    let profile = get_current_profile();
-    let key_length = profile
+    let profile = get_current_profile().unwrap();
+    let max_key_length = profile
         .keys()
         .map(|x| x.len())
         .fold(0, |a, b| max(a, b));
 
     for k in profile.keys() {
         t.fg(term::color::GREEN).unwrap();
-        write!(t, "{:<width$}", k, width = key_length + 1).unwrap();
+        write!(t, "{:<width$}", k, width = max_key_length + 1).unwrap();
         t.fg(term::color::WHITE).unwrap();
         write!(t, " -> ").unwrap();
         t.fg(term::color::GREEN).unwrap();
@@ -88,8 +89,13 @@ fn list_profile() {
 fn get_from_profile(key: &str) {
     let mut t = term::stdout().unwrap();
 
-    let profile = get_current_profile();
-    let ans = profile.get(key);
+    let mut real_key = String::from(key);
+    if real_key.ends_with("/") {
+        real_key.pop();
+    }
+
+    let profile = get_current_profile().unwrap();
+    let ans = profile.get(&real_key);
 
     match ans {
         Some(x) => {
@@ -102,7 +108,80 @@ fn get_from_profile(key: &str) {
             t.reset().unwrap();
         }
     }
+}
 
+fn add_teleport_to_profile(teleport_name: &str, directory_name: &str) {
+    let term_msg = "Need access to the terminal, but couldn't get that";
+    let mut t = term::stdout().expect(term_msg);
+    let path = std::path::Path::new(directory_name);
+
+    if !path.is_dir() {
+        t.fg(term::color::RED).unwrap();
+        writeln!(t, "Could not find {}.", directory_name).unwrap();
+        writeln!(t, "Is it really a directory").unwrap();
+        t.reset().unwrap();
+        return;
+    }
+
+    let canonical_path = path.canonicalize().unwrap();
+    let as_str = canonical_path.into_os_string().into_string().unwrap();
+    storage::save_to_current_profile(teleport_name, &as_str);
+
+    t.fg(term::color::GREEN).unwrap();
+    writeln!(t, "Added '{}' which points to '{}'", teleport_name, as_str).unwrap();
+    t.reset().unwrap();
+}
+
+fn do_remove_from_profile(key: &str) {
+    let term_msg = "Need access to the terminal, but couldn't get that";
+    let mut t = term::stdout().expect(term_msg);
+
+    if storage::remove_from_profile(key) {
+        t.fg(term::color::GREEN).unwrap();
+        writeln!(t, "'{}' is no longer a valid teleport", key).unwrap();
+    } else {
+        t.fg(term::color::RED).unwrap();
+        writeln!(t, "'{}' is not a teleport, could not remove", key).unwrap();
+    }
+
+    t.reset().unwrap();
+}
+
+fn add_to_profile(key: &str) {
+    let term_msg = "Need access to the terminal, but couldn't get that";
+    let mut t = term::stdout().expect(term_msg);
+
+    let items = key.split(":").collect::<Vec<_>>();
+    if items.len() == 1 {
+        add_teleport_to_profile(items[0], items[0]);
+    } else if items.len() == 2 {
+        add_teleport_to_profile(items[0], items[1]);
+    } else {
+        t.fg(term::color::RED).unwrap();
+        writeln!(t, "'{}' is not formatted like expected. Format is 'teleport:directory'", key).unwrap();
+        t.reset().unwrap();
+    }
+}
+
+fn do_prefix(key: &str) {
+    let profile = storage::get_current_profile().unwrap();
+
+    let matches: Vec<String> = profile
+        .keys()
+        .filter(|x| x.starts_with(key))
+        .map(|x| String::from(x))
+        .collect();
+    if matches.len() == 0 {
+        return;
+    } else if matches.len() == 1 {
+        println!("{}/", matches[0]);
+    } else {
+        print!("{}/", matches[0]);
+        for k in 1..matches.len() {
+            print!(" {}/", matches[k]);
+        }
+        println!("");
+    }
 }
 
 fn main() {
@@ -110,15 +189,18 @@ fn main() {
     let matches = parse_opts();
 
     if let Some(x) = matches.value_of("add") {
-        println!("Add={}", x);
+        add_to_profile(x);
     } else if let Some(x) = matches.value_of("get") {
         get_from_profile(x);
-    } else if let Some(x) = matches.value_of("prefix") {
-        println!("Prefix={}", x);
+
     } else if let Some(x) = matches.value_of("remove") {
-        println!("Remove={}", x);
+        do_remove_from_profile(x);
     } else if matches.occurrences_of("list") == 1 {
         list_profile();
+    } else if matches.occurrences_of("prefix") == 1 {
+        do_prefix("");
+    } else if let Some(x) = matches.value_of("prefix") {
+        do_prefix(x);
     } else {
         println!("Oh noes, not valid, lol =P");
         panic!("I am the panic");

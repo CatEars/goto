@@ -18,26 +18,58 @@ fn parse_config_toml(config_name: &str) -> String {
     return fs::read_to_string(cfg).unwrap();
 }
 
-pub fn parse_config() -> Config {
-    return toml::from_str(&parse_config_toml("_setting")).unwrap();
+fn write_to_current_profile(profile_name: &str, profile: &Map<String, Value>) {
+    let serialized = toml::to_string(profile).unwrap();
+    let mut cfg = config_dir().unwrap();
+
+    cfg.push("goto-cd");
+    cfg.push(format!("{}.toml", profile_name));
+
+    let mut file = fs::File::create(cfg).unwrap();
+    file.write_all(serialized.as_bytes()).unwrap();
 }
 
-pub fn parse_profile(profile_name: &str) -> Map<String, Value> {
+fn parse_config() -> Result<Config, toml::de::Error> {
+    return toml::from_str(&parse_config_toml("_setting"));
+}
+
+fn parse_profile(profile_name: &str) -> Result<Map<String, Value>, toml::de::Error> {
     let profile = parse_config_toml(profile_name);
-    return toml::from_str(&profile).unwrap();
+    return toml::from_str(&profile);
 }
 
-pub fn get_current_profile() -> Map<String, Value> {
-    let setting = parse_config();
-    return parse_profile(&setting.current_profile);
+fn get_current_profile_name() -> Result<String, toml::de::Error> {
+    return Ok(parse_config()?.current_profile);
 }
 
+pub fn get_current_profile() -> Result<Map<String, Value>, toml::de::Error> {
+    let current_profile = get_current_profile_name()?;
+    return parse_profile(&current_profile);
+}
+
+pub fn save_to_current_profile(teleport: &str, path: &str) {
+    let profile_name = get_current_profile_name().unwrap();
+    let mut profile = parse_profile(&profile_name).unwrap();
+    profile.insert(String::from(teleport), toml::Value::from(path));
+    write_to_current_profile(&profile_name, &profile);
+}
+
+pub fn remove_from_profile(teleport: &str) -> bool {
+    let profile_name = get_current_profile_name().unwrap();
+    let mut profile = parse_profile(&profile_name).unwrap();
+
+    let res = profile.remove(teleport);
+    write_to_current_profile(&profile_name, &profile);
+    match res {
+        Some(_x) => return true,
+        None => return false
+    }
+}
 
 pub fn ensure_directory_structure() {
     let mut cfg1 = config_dir().unwrap();
     cfg1.push("goto-cd");
     if !cfg1.exists() {
-        println!("{} does not exist! Creating!", cfg1.display());
         fs::create_dir_all(cfg1).unwrap();
     }
 
@@ -45,7 +77,6 @@ pub fn ensure_directory_structure() {
     cfg2.push("goto-cd");
     cfg2.push("_setting.toml");
     if !cfg2.exists() {
-        println!("{} does not exist! Writing default", cfg2.display());
         let default_config = Config {
             current_profile: String::from("default"),
             profiles: vec![String::from("default")],
@@ -57,7 +88,6 @@ pub fn ensure_directory_structure() {
         let mut profile = config_dir().unwrap();
         profile.push("goto-cd");
         profile.push("default.toml");
-        println!("{} does not exist! Writing default", profile.display());
         fs::File::create(profile).unwrap();
     }
 }
