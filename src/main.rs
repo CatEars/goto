@@ -5,7 +5,7 @@ use std::cmp::max;
 use clap::{App, Arg};
 use storage::{ensure_directory_structure, get_current_profile};
 
-fn parse_opts() -> clap::ArgMatches {
+fn parse_opts() -> clap::App<'static> {
     return App::new("Goto")
         .version("2.0")
         .author("Henrik 'CatEars' A. <catears13@gmail.com>")
@@ -41,8 +41,7 @@ fn parse_opts() -> clap::ArgMatches {
                 .short('l')
                 .long("list")
                 .about("Lists all teleports")
-        )
-        .get_matches();
+        );
 }
 
 /*
@@ -186,23 +185,20 @@ fn do_prefix(key: &str) {
 
 fn main() {
     ensure_directory_structure();
-    let matches = parse_opts();
+    let mut app = parse_opts();
+    let matches = app.get_matches_mut();
 
     if let Some(x) = matches.value_of("add") {
         add_to_profile(x);
     } else if let Some(x) = matches.value_of("get") {
         get_from_profile(x);
-
     } else if let Some(x) = matches.value_of("remove") {
         do_remove_from_profile(x);
     } else if matches.occurrences_of("list") == 1 {
         list_profile();
-    } else if matches.occurrences_of("prefix") == 1 {
-        do_prefix("");
     } else if let Some(x) = matches.value_of("prefix") {
         do_prefix(x);
     } else {
-        println!("Oh noes, not valid, lol =P");
-        panic!("I am the panic");
+        app.write_help(&mut std::io::stdout()).unwrap();
     }
 }
