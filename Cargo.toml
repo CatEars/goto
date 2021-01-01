@@ -2,7 +2,16 @@
 name = "goto-cd"
 version = "0.1.0"
 authors = ["Henrik 'CatEars' Adolfsson <catears13@gmail.com>"]
+description = "Teleportation for the command-line"
+#homepage = "https://github.com/CatEars/goto"
+documentation = "https://github.com/CatEars/goto/tree/master/docs"
+repository = "https://github.com/CatEars/goto"
+readme = "README.md"
+license = "MIT"
 edition = "2018"
+keywords = ["bookmark", "CLI", "terminal"]
+categories = ["command-line-utilities"]
+include = ["src/**/*", "README.md", "changelog.txt", "LICENSE", "docs/manual/*"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
