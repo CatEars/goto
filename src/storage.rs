@@ -4,12 +4,17 @@ use std::fs;
 use std::io::Write;
 use toml::value::Map;
 use toml::Value;
+use rust_embed::RustEmbed;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
     pub current_profile: String,
     pub profiles: Vec<String>,
 }
+
+#[derive(RustEmbed)]
+#[folder = "src/shell/"]
+struct Asset;
 
 fn parse_config_toml(config_name: &str) -> String {
     let mut cfg = config_dir().unwrap();
@@ -91,3 +96,46 @@ pub fn ensure_directory_structure() {
         fs::File::create(profile).unwrap();
     }
 }
+
+fn get_internal_shell_script(fname: &str) -> String {
+    let asset = Asset::get(fname).unwrap();
+    String::from(std::str::from_utf8(asset.as_ref()).unwrap())
+}
+
+fn get_bash_goto_enable_script_str() -> String {
+    get_internal_shell_script("goto-bash.sh")
+}
+
+fn get_zsh_goto_enable_script_str() -> String {
+    get_internal_shell_script("goto-zsh.sh")
+}
+
+fn get_selector_script_str() -> String {
+    get_internal_shell_script("goto")
+}
+
+fn install_local_shell(fname: &str, content: String) {
+    let mut executable = config_dir().unwrap();
+    executable.push("goto-cd");
+    executable.push("shell");
+    executable.push(fname);
+
+    let mut file = fs::File::create(executable).unwrap();
+    write!(file, "{}", &content).unwrap();
+
+}
+
+pub fn install_latest_scripts() {
+    let mut shell_dir = config_dir().unwrap();
+    shell_dir.push("goto-cd");
+    shell_dir.push("shell");
+    if !shell_dir.exists() {
+        fs::create_dir_all(shell_dir).unwrap();
+    }
+
+    install_local_shell("goto", get_selector_script_str());
+    install_local_shell("goto-zsh.sh", get_zsh_goto_enable_script_str());
+    install_local_shell("goto-bash.sh", get_bash_goto_enable_script_str());
+}
+
+
