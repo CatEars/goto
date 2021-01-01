@@ -3,7 +3,7 @@ name = "goto-cd"
 version = "0.1.0"
 authors = ["Henrik 'CatEars' Adolfsson <catears13@gmail.com>"]
 description = "Teleportation for the command-line"
-#homepage = "https://github.com/CatEars/goto"
+homepage = "https://github.com/CatEars/goto"
 documentation = "https://github.com/CatEars/goto/tree/master/docs"
 repository = "https://github.com/CatEars/goto"
 readme = "README.md"
@@ -21,3 +21,4 @@ toml = "0.5.3"
 serde = { version = "1.0.117", features = ["derive"] }
 clap = "3.0.0-beta.2"
 term = "0.6.1"
+rust-embed = "5.7.0"

@@ -41,6 +41,12 @@ fn parse_opts() -> clap::App<'static> {
                 .short('l')
                 .long("list")
                 .about("Lists all teleports")
+        )
+        .arg(
+            Arg::new("install")
+                .long("install")
+                .about("Install for specific shell (valid values are \"bash\"/\"zsh\")")
+                .takes_value(true)
         );
 }
 
@@ -183,6 +189,23 @@ fn do_prefix(key: &str) {
     }
 }
 
+fn print_source_install() {
+    println!("Succesfully installed the latest version of goto");
+    println!("If you are using 'bash' as a shell (default for most popular distros), add the following to ~/.bashrc without the backticks");
+    println!("");
+    println!("`source ~/.config/goto-cd/shell/goto`");
+    println!("");
+    println!("If you are using 'zsh' as a shell, add the following to ~/.zshrc without the backticks");
+    println!("");
+    println!("`source ~/.config/goto-cd/shell/goto`");
+    println!("");
+}
+
+fn do_install() {
+    storage::install_latest_scripts();
+    print_source_install()
+}
+
 fn main() {
     ensure_directory_structure();
     let mut app = parse_opts();
@@ -198,6 +221,8 @@ fn main() {
         list_profile();
     } else if let Some(x) = matches.value_of("prefix") {
         do_prefix(x);
+    } else if let Some(_x) = matches.value_of("install") {
+        do_install();
     } else {
         app.write_help(&mut std::io::stdout()).unwrap();
     }

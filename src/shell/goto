@@ -1,0 +1,20 @@
+# This file is meant to be sourced
+# Entrypoint for any application on unix
+
+if [ -n "$ZSH_VERSION" ]; then
+    if [ -f ./goto-zsh.sh ]; then
+        source ./goto-zsh.sh
+    else
+        echo "Inside zsh but could not find 'goto-zsh.sh!'"
+        echo "To remove this comment you should edit .zshrc"
+	echo "and remove any reference to goto"
+    fi
+elif [ -n "$BASH_VERSION" ]; then
+    if [ -f ./goto-bash.sh ]; then
+        source ./goto-bash.sh
+    else
+        echo "Inside bash but could not find 'goto-bash.sh!'"
+        echo "To remove this comment you should edit .bashrc"
+	echo "and remove any reference to goto"
+    fi
+fi
