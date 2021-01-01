@@ -3,12 +3,13 @@
 
 _GotoHelperFunction() {
     local cur
+    DRIVER=goto-cd
     COMPREPLY=()
     cur=${COMP_WORDS[COMP_CWORD]}
 
     if [ $COMP_CWORD -eq 1 ]; then
         # User is trying to jump
-        answers="$(_gotohelper --prefix "$cur")"
+        answers="$($DRIVER --prefix "$cur")"
         COMPREPLY=($answers)
 
         # Dirty hack to not expand with a space after subfolder expansion
@@ -26,7 +27,7 @@ _GotoHelperFunction() {
         command=${COMP_WORDS[1]}
         if [ "$command" = "--remove" ] && [ -n "$cur" ]; then
             # User is trying to remove
-            answers="$(_gotohelper --prefix "$cur")"
+            answers="$($DRIVER --prefix "$cur")"
             COMPREPLY=($answers)
             return
         fi
@@ -34,7 +35,7 @@ _GotoHelperFunction() {
 }
 
 function goto() {
-    GT=_gotohelper
+    GT=goto-cd
     A=$1
     B=$2
     if [[ ! $A == -* ]] && [ -n "$A" ]; then
