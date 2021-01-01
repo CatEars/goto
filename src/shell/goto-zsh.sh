@@ -2,13 +2,13 @@
 # Entry point for zsh based shells
 
 function goto() {
-    GT=_gotohelper
+    DRIVER=goto-cd
     A=$1
     B=$2
     if [[ ! $A == -* ]] && [ -n "$A" ]; then
         # We are dealing with a goto that wants to go somewhere
         # The first argument is non-null and does not start with a dash!
-        target=$($GT --get $A)
+        target=$($DRIVER --get $A)
         if [ $? -ne 0 ]; then
             echo "$target"
         elif [ -d $target ]; then
@@ -18,7 +18,7 @@ function goto() {
         fi
     else
         # We are dealing with a command + argument
-        $GT $A $B $3 $4
+        $DRIVER $A $B $3 $4
     fi
 }
 
@@ -39,7 +39,7 @@ function _GotoHelperFunction() {
 
     A=$line
     if [[ ! $A == -* ]]; then
-        target=($(_gotohelper --prefix "$A"))
+        target=($($DRIVER --prefix "$A"))
         _describe -t target 'teleports' target
     fi
 }
