@@ -1,8 +1,8 @@
 extern crate term;
 
 mod storage;
-use std::cmp::max;
 use clap::{App, Arg};
+use std::cmp::max;
 use storage::{ensure_directory_structure, get_current_profile};
 
 fn parse_opts() -> clap::App<'static> {
@@ -30,23 +30,23 @@ fn parse_opts() -> clap::App<'static> {
                 .about("List all targets that have X as prefix")
                 .takes_value(true),
         )
-        .arg(Arg::new("remove")
-             .short('r')
-             .long("remove")
-             .about("Remove a teleport from the current profile")
-             .takes_value(true)
+        .arg(
+            Arg::new("remove")
+                .short('r')
+                .long("remove")
+                .about("Remove a teleport from the current profile")
+                .takes_value(true),
         )
         .arg(
             Arg::new("list")
                 .short('l')
                 .long("list")
-                .about("Lists all teleports")
+                .about("Lists all teleports"),
         )
         .arg(
             Arg::new("install")
                 .long("install")
-                .about("Install for specific shell (valid values are \"bash\"/\"zsh\")")
-                .takes_value(true)
+                .about("Installs `goto` function into shell."),
         );
 }
 
@@ -73,10 +73,7 @@ fn list_profile() {
     let mut t = term::stdout().expect(msg);
 
     let profile = get_current_profile().unwrap();
-    let max_key_length = profile
-        .keys()
-        .map(|x| x.len())
-        .fold(0, |a, b| max(a, b));
+    let max_key_length = profile.keys().map(|x| x.len()).fold(0, |a, b| max(a, b));
 
     for k in profile.keys() {
         t.fg(term::color::GREEN).unwrap();
@@ -106,7 +103,7 @@ fn get_from_profile(key: &str) {
         Some(x) => {
             let v = x.as_str().unwrap();
             writeln!(t, "{}", v).unwrap();
-        },
+        }
         _ => {
             t.fg(term::color::RED).unwrap();
             writeln!(t, "{} is not a valid teleport.", key).unwrap();
@@ -163,7 +160,12 @@ fn add_to_profile(key: &str) {
         add_teleport_to_profile(items[0], items[1]);
     } else {
         t.fg(term::color::RED).unwrap();
-        writeln!(t, "'{}' is not formatted like expected. Format is 'teleport:directory'", key).unwrap();
+        writeln!(
+            t,
+            "'{}' is not formatted like expected. Format is 'teleport:directory'",
+            key
+        )
+        .unwrap();
         t.reset().unwrap();
     }
 }
@@ -190,14 +192,12 @@ fn do_prefix(key: &str) {
 }
 
 fn print_source_install() {
-    println!("Succesfully installed the latest version of goto");
-    println!("If you are using 'bash' as a shell (default for most popular distros), add the following to ~/.bashrc without the backticks");
+    let path = storage::get_selector_script_path();
     println!("");
-    println!("`source ~/.config/goto-cd/shell/goto`");
-    println!("");
-    println!("If you are using 'zsh' as a shell, add the following to ~/.zshrc without the backticks");
-    println!("");
-    println!("`source ~/.config/goto-cd/shell/goto`");
+    println!("# add `goto` command to shell");
+    println!("if [ -f {} ]; then", path);
+    println!("  source {}", path);
+    println!("fi");
     println!("");
 }
 
@@ -221,7 +221,7 @@ fn main() {
         list_profile();
     } else if let Some(x) = matches.value_of("prefix") {
         do_prefix(x);
-    } else if let Some(_x) = matches.value_of("install") {
+    } else if matches.occurrences_of("install") == 1 {
         do_install();
     } else {
         app.write_help(&mut std::io::stdout()).unwrap();

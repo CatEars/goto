@@ -29,14 +29,14 @@ Goto - The good way to program
 
 ```sh
 cargo install goto-cd
-goto-cd --install bash $(which goto-cd) >> ~/.bashrc
+goto-cd --install >> ~/.bashrc
 ```
 
 #### zsh
 
 ```sh
 cargo install goto-cd
-goto-cd --install zsh $(which goto-cd) >> ~/.zshrc
+goto-cd --install >> ~/.zshrc
 ```
 
 ## Documentation

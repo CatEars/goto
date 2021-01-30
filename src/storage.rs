@@ -1,10 +1,10 @@
 use dirs::config_dir;
+use rust_embed::RustEmbed;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
 use toml::value::Map;
 use toml::Value;
-use rust_embed::RustEmbed;
 
 #[derive(Serialize, Deserialize)]
 pub struct Config {
@@ -67,7 +67,7 @@ pub fn remove_from_profile(teleport: &str) -> bool {
     write_to_current_profile(&profile_name, &profile);
     match res {
         Some(_x) => return true,
-        None => return false
+        None => return false,
     }
 }
 
@@ -122,7 +122,6 @@ fn install_local_shell(fname: &str, content: String) {
 
     let mut file = fs::File::create(executable).unwrap();
     write!(file, "{}", &content).unwrap();
-
 }
 
 pub fn install_latest_scripts() {
@@ -138,4 +137,10 @@ pub fn install_latest_scripts() {
     install_local_shell("goto-bash.sh", get_bash_goto_enable_script_str());
 }
 
-
+pub fn get_selector_script_path() -> String {
+    let mut selector_path = config_dir().unwrap();
+    selector_path.push("goto-cd");
+    selector_path.push("shell");
+    selector_path.push("goto");
+    return selector_path.as_path().display().to_string();
+}

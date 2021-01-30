@@ -2,16 +2,18 @@
 # Entrypoint for any application on unix
 
 if [ -n "$ZSH_VERSION" ]; then
-    if [ -f ./goto-zsh.sh ]; then
-        source ./goto-zsh.sh
+    __thisdir=${0:a:h}
+    if [ -f $__thisdir/goto-zsh.sh ]; then
+        source $__thisdir/goto-zsh.sh
     else
         echo "Inside zsh but could not find 'goto-zsh.sh!'"
         echo "To remove this comment you should edit .zshrc"
-	echo "and remove any reference to goto"
+	      echo "and remove any reference to goto"
     fi
 elif [ -n "$BASH_VERSION" ]; then
-    if [ -f ./goto-bash.sh ]; then
-        source ./goto-bash.sh
+    __thisdir="$(dirname "${BASH_SOURCE[0]}")"
+    if [ -f $__thisdir/goto-bash.sh ]; then
+        source $__thisdir/goto-bash.sh
     else
         echo "Inside bash but could not find 'goto-bash.sh!'"
         echo "To remove this comment you should edit .bashrc"
