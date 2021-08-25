@@ -1,6 +1,8 @@
 extern crate term;
 
 mod storage;
+mod embedded;
+mod paths;
 use clap::{App, Arg};
 use std::cmp::max;
 use storage::{ensure_directory_structure, get_current_profile};
@@ -46,8 +48,19 @@ fn parse_opts() -> clap::App<'static> {
         .arg(
             Arg::new("install")
                 .long("install")
-                .about("Installs `goto` function into shell."),
+                .about("Installs `goto` function into linux shell."),
+        )
+        .arg(
+            Arg::new("powershell-install")
+                .long("powershell-install")
+                .about("Installs `goto` function into powershell"),
+        )
+        .arg(
+            Arg::new("config-dir")
+                .long("config-dir")
+                .about("Prints the directory where goto configuration is stored")
         );
+
 }
 
 /*
@@ -64,7 +77,7 @@ Options:
 -m, --rmprofile TEXT  Remove a profile
 -p, --profile TEXT    Switch to a (possibly non-existant) profile
 --profiles            List all profiles
---install [bash|zsh]  Install goto for the given shell, "bash" or "zsh"
+--install             Install goto for the given shell, "bash" or "zsh"
 --help                Show this message and exit.
  */
 
@@ -112,6 +125,7 @@ fn get_from_profile(key: &str) {
     }
 }
 
+
 fn add_teleport_to_profile(teleport_name: &str, directory_name: &str) {
     let term_msg = "Need access to the terminal, but couldn't get that";
     let mut t = term::stdout().expect(term_msg);
@@ -125,12 +139,11 @@ fn add_teleport_to_profile(teleport_name: &str, directory_name: &str) {
         return;
     }
 
-    let canonical_path = path.canonicalize().unwrap();
-    let as_str = canonical_path.into_os_string().into_string().unwrap();
-    storage::save_to_current_profile(teleport_name, &as_str);
+    let canonical_path = paths::canonicalize_path(&path.to_path_buf()).display().to_string();
+    storage::save_to_current_profile(teleport_name, &canonical_path);
 
     t.fg(term::color::GREEN).unwrap();
-    writeln!(t, "Added '{}' which points to '{}'", teleport_name, as_str).unwrap();
+    writeln!(t, "Added '{}' which points to '{}'", teleport_name, canonical_path).unwrap();
     t.reset().unwrap();
 }
 
@@ -155,7 +168,11 @@ fn add_to_profile(key: &str) {
 
     let items = key.split(":").collect::<Vec<_>>();
     if items.len() == 1 {
-        add_teleport_to_profile(items[0], items[0]);
+        let telepath = std::path::Path::new(items[0]).to_path_buf();
+        let canonical = paths::canonicalize_path(&telepath);
+        let fname = canonical.file_name().unwrap();
+        let as_str = fname.to_str().unwrap();
+       add_teleport_to_profile(as_str, items[0]);
     } else if items.len() == 2 {
         add_teleport_to_profile(items[0], items[1]);
     } else {
@@ -192,7 +209,7 @@ fn do_prefix(key: &str) {
 }
 
 fn print_source_install() {
-    let path = storage::get_selector_script_path();
+    let path = paths::get_config_script_path("goto").display().to_string();
     println!("");
     println!("# add `goto` command to shell");
     println!("if [ -f {} ]; then", path);
@@ -201,9 +218,30 @@ fn print_source_install() {
     println!("");
 }
 
+fn print_powershell_source_install() {
+    let path = paths::get_config_script_path("goto").display().to_string();
+    println!("");
+    println!("# goto profile");
+    println!("$GotoPath = \"{}\"", path);
+    println!("if (Test-Path($GotoPath)) {{");
+    println!("  . \"$GotoPath\"");
+    println!("}}");
+    println!("");
+}
+
 fn do_install() {
     storage::install_latest_scripts();
     print_source_install()
+}
+
+fn do_powershell_install() {
+    storage::install_latest_scripts();
+    print_powershell_source_install();
+}
+
+fn do_config_dir() {
+    let path = paths::get_config_dir().display().to_string();
+    println!("{}", path);
 }
 
 fn main() {
@@ -223,6 +261,10 @@ fn main() {
         do_prefix(x);
     } else if matches.occurrences_of("install") == 1 {
         do_install();
+    } else if matches.occurrences_of("powershell-install") == 1 {
+        do_powershell_install();
+    } else if matches.occurrences_of("config-dir") == 1 {
+        do_config_dir();
     } else {
         app.write_help(&mut std::io::stdout()).unwrap();
     }

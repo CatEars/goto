@@ -17,8 +17,10 @@ include = ["src/**/*", "README.md", "changelog.txt", "LICENSE", "docs/manual/*"]
 
 [dependencies]
 dirs = "3.0.1"
+dirs-next = "2.0.0"
 toml = "0.5.3"
 serde = { version = "1.0.117", features = ["derive"] }
 clap = "3.0.0-beta.2"
 term = "0.6.1"
 rust-embed = "5.7.0"
+dunce = "1.0.2"
