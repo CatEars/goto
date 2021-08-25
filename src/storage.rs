@@ -1,5 +1,6 @@
-use dirs::config_dir;
-use rust_embed::RustEmbed;
+use crate::embedded;
+use crate::paths;
+
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
@@ -12,23 +13,14 @@ pub struct Config {
     pub profiles: Vec<String>,
 }
 
-#[derive(RustEmbed)]
-#[folder = "src/shell/"]
-struct Asset;
-
 fn parse_config_toml(config_name: &str) -> String {
-    let mut cfg = config_dir().unwrap();
-    cfg.push("goto-cd");
-    cfg.push(format!("{}.toml", config_name));
-    return fs::read_to_string(cfg).unwrap();
+    let cfg = paths::get_config_toml_path(config_name);
+    fs::read_to_string(cfg).unwrap()
 }
 
 fn write_to_current_profile(profile_name: &str, profile: &Map<String, Value>) {
     let serialized = toml::to_string(profile).unwrap();
-    let mut cfg = config_dir().unwrap();
-
-    cfg.push("goto-cd");
-    cfg.push(format!("{}.toml", profile_name));
+    let cfg = paths::get_config_toml_path(profile_name);
 
     let mut file = fs::File::create(cfg).unwrap();
     file.write_all(serialized.as_bytes()).unwrap();
@@ -72,15 +64,12 @@ pub fn remove_from_profile(teleport: &str) -> bool {
 }
 
 pub fn ensure_directory_structure() {
-    let mut cfg1 = config_dir().unwrap();
-    cfg1.push("goto-cd");
+    let cfg1 = paths::get_config_dir();
     if !cfg1.exists() {
         fs::create_dir_all(cfg1).unwrap();
     }
 
-    let mut cfg2 = config_dir().unwrap();
-    cfg2.push("goto-cd");
-    cfg2.push("_setting.toml");
+    let cfg2 = paths::get_config_toml_path("_setting");
     if !cfg2.exists() {
         let default_config = Config {
             current_profile: String::from("default"),
@@ -90,57 +79,25 @@ pub fn ensure_directory_structure() {
         let mut file = fs::File::create(cfg2).unwrap();
         write!(file, "{}", config_str).unwrap();
 
-        let mut profile = config_dir().unwrap();
-        profile.push("goto-cd");
-        profile.push("default.toml");
+        let profile = paths::get_config_toml_path("default");
         fs::File::create(profile).unwrap();
     }
 }
 
-fn get_internal_shell_script(fname: &str) -> String {
-    let asset = Asset::get(fname).unwrap();
-    String::from(std::str::from_utf8(asset.as_ref()).unwrap())
-}
-
-fn get_bash_goto_enable_script_str() -> String {
-    get_internal_shell_script("goto-bash.sh")
-}
-
-fn get_zsh_goto_enable_script_str() -> String {
-    get_internal_shell_script("goto-zsh.sh")
-}
-
-fn get_selector_script_str() -> String {
-    get_internal_shell_script("goto")
-}
-
 fn install_local_shell(fname: &str, content: String) {
-    let mut executable = config_dir().unwrap();
-    executable.push("goto-cd");
-    executable.push("shell");
-    executable.push(fname);
-
+    let executable = paths::get_config_script_path(fname);
     let mut file = fs::File::create(executable).unwrap();
     write!(file, "{}", &content).unwrap();
 }
 
 pub fn install_latest_scripts() {
-    let mut shell_dir = config_dir().unwrap();
-    shell_dir.push("goto-cd");
-    shell_dir.push("shell");
+    let shell_dir = paths::get_config_shell_dir();
     if !shell_dir.exists() {
         fs::create_dir_all(shell_dir).unwrap();
     }
 
-    install_local_shell("goto", get_selector_script_str());
-    install_local_shell("goto-zsh.sh", get_zsh_goto_enable_script_str());
-    install_local_shell("goto-bash.sh", get_bash_goto_enable_script_str());
-}
-
-pub fn get_selector_script_path() -> String {
-    let mut selector_path = config_dir().unwrap();
-    selector_path.push("goto-cd");
-    selector_path.push("shell");
-    selector_path.push("goto");
-    return selector_path.as_path().display().to_string();
+    install_local_shell("goto", embedded::get_selector_script_str());
+    install_local_shell("goto-zsh.sh", embedded::get_zsh_goto_enable_script_str());
+    install_local_shell("goto-bash.sh", embedded::get_bash_goto_enable_script_str());
+    install_local_shell("goto-powershell.ps1", embedded::get_powershell_enable_script_str());
 }
