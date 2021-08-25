@@ -43,7 +43,7 @@ goto-cd --install >> ~/.zshrc
 
 ```sh
 cargo install goto-cd
-goto-cd --install-powershell
+goto-cd --powershell-install >> $(Join-Path $([Environment]::GetFolderPath("MyDocuments")) "PowerShell-Profile.ps1")
 ```
 
 ## Documentation

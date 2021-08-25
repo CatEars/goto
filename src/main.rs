@@ -209,7 +209,7 @@ fn print_source_install() {
 }
 
 fn print_powershell_source_install() {
-    let path = paths::get_config_script_path("goto").display().to_string();
+    let path = paths::get_config_script_path("goto-powershell.ps1").display().to_string();
     println!("");
     println!("# goto profile");
     println!("$GotoPath = \"{}\"", path);
