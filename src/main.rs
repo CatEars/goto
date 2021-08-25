@@ -10,7 +10,7 @@ use storage::{ensure_directory_structure, get_current_profile};
 fn parse_opts() -> clap::App<'static> {
     return App::new("Goto")
         .version("2.0")
-        .author("Henrik 'CatEars' A. <catears13@gmail.com>")
+        .author("'CatEars' <catears13@gmail.com>")
         .about("Give your terminal teleporting powers")
         .arg(
             Arg::new("add")
@@ -43,43 +43,29 @@ fn parse_opts() -> clap::App<'static> {
             Arg::new("list")
                 .short('l')
                 .long("list")
-                .about("Lists all teleports"),
+                .about("Lists all teleports")
+                .takes_value(false),
         )
         .arg(
             Arg::new("install")
                 .long("install")
-                .about("Installs `goto` function into linux shell."),
+                .about("Installs `goto` function into linux shell.")
+                .takes_value(false),
         )
         .arg(
             Arg::new("powershell-install")
                 .long("powershell-install")
-                .about("Installs `goto` function into powershell"),
+                .about("Installs `goto` function into powershell")
+                .takes_value(false),
         )
         .arg(
             Arg::new("config-dir")
                 .long("config-dir")
                 .about("Prints the directory where goto configuration is stored")
+                .takes_value(false)
         );
 
 }
-
-/*
-Usage: _gotohelper [OPTIONS]
-
-CLI for teleporting to anywhere on your computer!
-
-Options:
--a, --add TEXT        Add a teleport ([name:]path/to/directory)
--g, --get TEXT        Print a teleport target
---prefix TEXT         List all targets that have X as prefix
--r, --remove TEXT     Remove a teleport
--l, --list            List all teleports
--m, --rmprofile TEXT  Remove a profile
--p, --profile TEXT    Switch to a (possibly non-existant) profile
---profiles            List all profiles
---install             Install goto for the given shell, "bash" or "zsh"
---help                Show this message and exit.
- */
 
 fn list_profile() {
     let msg = "Need access to the terminal, but couldn't get that";
@@ -121,6 +107,7 @@ fn get_from_profile(key: &str) {
             t.fg(term::color::RED).unwrap();
             writeln!(t, "{} is not a valid teleport.", key).unwrap();
             t.reset().unwrap();
+            std::process::exit(1);
         }
     }
 }
@@ -136,7 +123,7 @@ fn add_teleport_to_profile(teleport_name: &str, directory_name: &str) {
         writeln!(t, "Could not find {}.", directory_name).unwrap();
         writeln!(t, "Is it really a directory").unwrap();
         t.reset().unwrap();
-        return;
+        std::process::exit(1);
     }
 
     let canonical_path = paths::canonicalize_path(&path.to_path_buf()).display().to_string();
@@ -157,6 +144,8 @@ fn do_remove_from_profile(key: &str) {
     } else {
         t.fg(term::color::RED).unwrap();
         writeln!(t, "'{}' is not a teleport, could not remove", key).unwrap();
+        t.reset().unwrap();
+        std::process::exit(1);
     }
 
     t.reset().unwrap();
@@ -184,6 +173,7 @@ fn add_to_profile(key: &str) {
         )
         .unwrap();
         t.reset().unwrap();
+        std::process::exit(1);
     }
 }
 

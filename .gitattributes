@@ -1,0 +1,4 @@
+./tests/test_shell.sh eol=lf
+./src/shell/goto eol=lf
+./src/shell/goto-bash.sh eol=lf
+./src/shell/goto-zsh.sh eol=lf
