@@ -33,6 +33,12 @@ fn parse_opts<'a, 'b>() -> clap::App<'a, 'b> {
                 .takes_value(true),
         )
         .arg(
+            Arg::with_name("all-prefix")
+                .long("all-prefix")
+                .help("List all targets for CLI usage")
+                .takes_value(false),
+        )
+        .arg(
             Arg::with_name("remove")
                 .short("r")
                 .long("remove")
@@ -192,7 +198,7 @@ fn do_prefix(key: &str) {
     } else {
         print!("{}/", matches[0]);
         for k in 1..matches.len() {
-            print!(" {}/", matches[k]);
+            print!("   {}/", matches[k]);
         }
         println!("");
     }
@@ -249,6 +255,8 @@ fn main() {
         list_profile();
     } else if let Some(x) = matches.value_of("prefix") {
         do_prefix(x);
+    } else if matches.occurrences_of("all-prefix") == 1 {
+        do_prefix("");
     } else if matches.occurrences_of("install") == 1 {
         do_install();
     } else if matches.occurrences_of("install-powershell") == 1 {

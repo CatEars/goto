@@ -63,6 +63,15 @@ goto catears
 # Ends up at /home/catears
 ```
 
+## Updating
+
+```sh
+cargo install --locked goto-cd
+# Installs the newest version of `goto-cd`
+goto --install
+# Installs the latest version of shell scripts for both unix/windows
+```
+
 ## Documentation
 
 See the [docs](https://github.com/CatEars/goto/blob/master/docs/README.md) folder.
