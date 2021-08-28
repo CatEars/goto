@@ -1,6 +1,6 @@
 [package]
 name = "goto-cd"
-version = "0.3.0"
+version = "2.0.0"
 authors = ["Henrik 'CatEars' Adolfsson <catears13@gmail.com>"]
 description = "Teleportation for the command-line"
 homepage = "https://github.com/CatEars/goto"

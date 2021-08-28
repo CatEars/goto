@@ -43,7 +43,24 @@ goto-cd --install >> ~/.zshrc
 
 ```sh
 cargo install goto-cd
-goto-cd --powershell-install >> $(Join-Path $([Environment]::GetFolderPath("MyDocuments")) "PowerShell-Profile.ps1")
+goto-cd --powershell-install >> $PROFILE
+```
+
+#### Finally
+
+Restart your shell for effects to take place
+
+## Basic Usage
+
+Note: The installed binary is called `goto-cd`, but `goto` is the name of the command 
+loaded into your shell. `goto-cd` is only referenced when installing the first time.
+
+```sh
+goto --add .
+# Prints "Added 'catears' which points to '/home/catears'"
+cd /
+goto catears
+# Ends up at /home/catears
 ```
 
 ## Documentation
