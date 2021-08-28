@@ -9,7 +9,7 @@ use storage::{ensure_directory_structure, get_current_profile};
 
 fn parse_opts<'a, 'b>() -> clap::App<'a, 'b> {
     return App::new("Goto")
-        .version("2.1.0")
+        .version("2.1.1")
         .author("'CatEars' <catears13@gmail.com>")
         .about("Give your terminal teleporting powers")
         .arg(
