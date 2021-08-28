@@ -7,7 +7,7 @@ struct Asset;
 
 fn get_internal_shell_script(fname: &str) -> String {
     let asset = Asset::get(fname).unwrap();
-    String::from(std::str::from_utf8(asset.as_ref()).unwrap())
+    String::from(std::str::from_utf8(asset.data.as_ref()).unwrap())
 }
 
 pub fn get_bash_goto_enable_script_str() -> String {

@@ -7,61 +7,61 @@ use clap::{App, Arg};
 use std::cmp::max;
 use storage::{ensure_directory_structure, get_current_profile};
 
-fn parse_opts() -> clap::App<'static> {
+fn parse_opts<'a, 'b>() -> clap::App<'a, 'b> {
     return App::new("Goto")
         .version("2.0")
         .author("'CatEars' <catears13@gmail.com>")
         .about("Give your terminal teleporting powers")
         .arg(
-            Arg::new("add")
-                .short('a')
+            Arg::with_name("add")
+                .short("a")
                 .long("add")
-                .about("Add a new teleport to the current profile")
+                .help("Add a new teleport to the current profile")
                 .takes_value(true),
         )
         .arg(
-            Arg::new("get")
-                .short('g')
+            Arg::with_name("get")
+                .short("g")
                 .long("get")
-                .about("Print a teleport target.")
+                .help("Print a teleport target.")
                 .takes_value(true),
         )
         .arg(
-            Arg::new("prefix")
+            Arg::with_name("prefix")
                 .long("prefix")
-                .about("List all targets that have X as prefix")
+                .help("List all targets that have X as prefix")
                 .takes_value(true),
         )
         .arg(
-            Arg::new("remove")
-                .short('r')
+            Arg::with_name("remove")
+                .short("r")
                 .long("remove")
-                .about("Remove a teleport from the current profile")
+                .help("Remove a teleport from the current profile")
                 .takes_value(true),
         )
         .arg(
-            Arg::new("list")
-                .short('l')
+            Arg::with_name("list")
+                .short("l")
                 .long("list")
-                .about("Lists all teleports")
+                .help("Lists all teleports")
                 .takes_value(false),
         )
         .arg(
-            Arg::new("install")
+            Arg::with_name("install")
                 .long("install")
-                .about("Installs `goto` function into linux shell.")
+                .help("Installs `goto` function into linux shell.")
                 .takes_value(false),
         )
         .arg(
-            Arg::new("powershell-install")
-                .long("powershell-install")
-                .about("Installs `goto` function into powershell")
+            Arg::with_name("install-powershell")
+                .long("install-powershell")
+                .help("Installs `goto` function into powershell")
                 .takes_value(false),
         )
         .arg(
-            Arg::new("config-dir")
+            Arg::with_name("config-dir")
                 .long("config-dir")
-                .about("Prints the directory where goto configuration is stored")
+                .help("Prints the directory where goto configuration is stored")
                 .takes_value(false)
         );
 
@@ -161,7 +161,7 @@ fn add_to_profile(key: &str) {
         let canonical = paths::canonicalize_path(&telepath);
         let fname = canonical.file_name().unwrap();
         let as_str = fname.to_str().unwrap();
-       add_teleport_to_profile(as_str, items[0]);
+        add_teleport_to_profile(as_str, items[0]);
     } else if items.len() == 2 {
         add_teleport_to_profile(items[0], items[1]);
     } else {
@@ -236,8 +236,8 @@ fn do_config_dir() {
 
 fn main() {
     ensure_directory_structure();
-    let mut app = parse_opts();
-    let matches = app.get_matches_mut();
+    let app = parse_opts();
+    let matches = app.get_matches();
 
     if let Some(x) = matches.value_of("add") {
         add_to_profile(x);
@@ -251,11 +251,11 @@ fn main() {
         do_prefix(x);
     } else if matches.occurrences_of("install") == 1 {
         do_install();
-    } else if matches.occurrences_of("powershell-install") == 1 {
+    } else if matches.occurrences_of("install-powershell") == 1 {
         do_powershell_install();
     } else if matches.occurrences_of("config-dir") == 1 {
         do_config_dir();
     } else {
-        app.write_help(&mut std::io::stdout()).unwrap();
+        parse_opts().write_help(&mut std::io::stdout()).unwrap();
     }
 }
