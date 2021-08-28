@@ -28,21 +28,21 @@ Goto - The good way to program
 #### bash
 
 ```sh
-cargo install goto-cd
+cargo install --locked goto-cd
 goto-cd --install >> ~/.bashrc
 ```
 
 #### zsh
 
 ```sh
-cargo install goto-cd
+cargo install --locked goto-cd
 goto-cd --install >> ~/.zshrc
 ```
 
 #### powershell
 
 ```sh
-cargo install goto-cd
+cargo install --locked goto-cd
 goto-cd --powershell-install >> $PROFILE
 ```
 
