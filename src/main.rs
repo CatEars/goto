@@ -198,7 +198,7 @@ fn do_prefix(key: &str) {
     } else {
         print!("{}/", matches[0]);
         for k in 1..matches.len() {
-            print!("   {}/", matches[k]);
+            print!(" {}/", matches[k]);
         }
         println!("");
     }
