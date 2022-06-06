@@ -22,5 +22,5 @@ toml = "0.5.3"
 serde = { version = "1.0.117", features = ["derive"] }
 clap = "2.33.3"
 term = "0.7.0"
-rust-embed = "6.0.1"
+rust-embed = "6.3.0"
 dunce = "1.0.2"
